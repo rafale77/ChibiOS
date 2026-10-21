@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ OSAL_IRQ_HANDLER(STM32_DMA1_CH123_HANDLER) {
   OSAL_IRQ_PROLOGUE();
 
   /* Check on channel 1.*/
-  dmaServeInterrupt(STM32_DMA1_STREAM2);
+  dmaServeInterrupt(STM32_DMA1_STREAM1);
 
   /* Check on channel 2.*/
   dmaServeInterrupt(STM32_DMA1_STREAM2);

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -757,7 +757,7 @@
  *
  * @api
  */
-#define rccEnableTIM16(lp) rccEnableAPB(RCC_APBENR2_TIM16EN, lp)
+#define rccEnableTIM16(lp) rccEnableAPBR2(RCC_APBENR2_TIM16EN, lp)
 
 /**
  * @brief   Disables the TIM16 peripheral clock.

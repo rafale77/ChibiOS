@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
  *          Serial device drivers are usually designed to have a lower side
  *          (lower driver, it is usually an interrupt service routine) and an
  *          upper side (upper driver, accessed by the application threads).<br>
- *          There are several kind of queues:<br>
+ *          There are several kinds of queues:<br>
  *          - <b>Input queue</b>, unidirectional queue where the writer is the
  *            lower side and the reader is the upper side.
  *          - <b>Output queue</b>, unidirectional queue where the writer is the
@@ -293,7 +293,6 @@ msg_t iqGetI(input_queue_t *iqp) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A byte value from the queue.
  * @retval MSG_TIMEOUT  if the specified time expired.
  * @retval MSG_RESET    if the queue has been reset.
@@ -380,7 +379,6 @@ size_t iqReadI(input_queue_t *iqp, uint8_t *bp, size_t n) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  *
  * @api
@@ -527,7 +525,6 @@ msg_t oqPutI(output_queue_t *oqp, uint8_t b) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if the operation succeeded.
  * @retval MSG_TIMEOUT  if the specified time expired.
@@ -647,7 +644,6 @@ size_t oqWriteI(output_queue_t *oqp, const uint8_t *bp, size_t n) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  *
  * @api

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -150,7 +150,7 @@ __STATIC_FORCEINLINE uint32_t sdc_lld_get_timeout(SDCDriver *sdcp,
  */
 static bool sdc_lld_prepare_read_bytes(SDCDriver *sdcp,
                                        uint8_t *buf, uint32_t bytes) {
-  osalDbgCheck(bytes < 0x1000000);
+  osalDbgCheck(bytes < 0x1000000U);
 
   sdcp->sdio->DTIMER = sdc_lld_get_timeout(sdcp, STM32_SDC_READ_TIMEOUT_MS);
 
@@ -284,21 +284,21 @@ static bool sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
     osalThreadSuspendS(&sdcp->thread);
   }
 
-  /* Stopping operations, waiting for transfer completion at DMA level, then
-     the stream is disabled and cleared.*/
-  dmaWaitCompletion(sdcp->dma);
-  sdcp->sdio->MASK  = 0U;
-  sdcp->sdio->DCTRL = 0U;
+  /* Mask has now been set to zero by interrupt handler. */
+  osalSysUnlock();
 
-  if ((sdcp->sdio->STA & SDIO_STA_DATAEND) == 0) {
-    osalSysUnlock();
+  /* Data transfer not complete, let error cleanup stop DMA.*/
+  if ((sdcp->sdio->STA & SDIO_STA_DATAEND) == 0U) {
     return HAL_FAILED;
   }
 
+  /* Waiting for transfer completion at DMA level, then the stream is disabled
+     and cleared.*/
+  dmaWaitCompletion(sdcp->dma);
+  sdcp->sdio->DCTRL = 0U;
+
   /* Clearing status.*/
   sdcp->sdio->ICR = SDIO_ICR_ALL_FLAGS;
-
-  osalSysUnlock();
 
   /* Finalize transaction.*/
   if (n > 1U)
@@ -497,7 +497,7 @@ void sdc_lld_stop(SDCDriver *sdcp) {
 void sdc_lld_start_clk(SDCDriver *sdcp) {
 
   /* Initial clock setting: 400kHz, 1bit mode.*/
-  sdcp->sdio->CLKCR  = sdc_lld_clkdiv(sdcp, 400000);
+  sdcp->sdio->CLKCR  = sdc_lld_clkdiv(sdcp, 400000U);
   sdcp->sdio->POWER |= SDIO_POWER_PWRCTRL_0 | SDIO_POWER_PWRCTRL_1;
   sdcp->sdio->CLKCR |= SDIO_CLKCR_CLKEN;
 
@@ -520,9 +520,9 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
                                                SDIO_CLKCR_PWRSAV_Msk |
                                                SDIO_CLKCR_CLKDIV_Msk)) |
 #if STM32_SDC_SDIO_PWRSAV
-                         sdc_lld_clkdiv(sdcp, 50000000) | SDIO_CLKCR_PWRSAV;
+                         sdc_lld_clkdiv(sdcp, 50000000U) | SDIO_CLKCR_PWRSAV;
 #else
-                         sdc_lld_clkdiv(sdcp, 50000000);
+                         sdc_lld_clkdiv(sdcp, 50000000U);
 #endif
   }
   else {
@@ -530,9 +530,9 @@ void sdc_lld_set_data_clk(SDCDriver *sdcp, sdcbusclk_t clk) {
                                                SDIO_CLKCR_PWRSAV_Msk |
                                                SDIO_CLKCR_CLKDIV_Msk)) |
 #if STM32_SDC_SDIO_PWRSAV
-                         sdc_lld_clkdiv(sdcp, 25000000) | SDIO_CLKCR_PWRSAV;
+                         sdc_lld_clkdiv(sdcp, 25000000U) | SDIO_CLKCR_PWRSAV;
 #else
-                         sdc_lld_clkdiv(sdcp, 25000000);
+                         sdc_lld_clkdiv(sdcp, 25000000U);
 #endif
   }
 }
@@ -587,8 +587,8 @@ void sdc_lld_send_cmd_none(SDCDriver *sdcp, uint8_t cmd, uint32_t arg) {
 
   sdcp->sdio->ARG = arg;
   sdcp->sdio->CMD = (uint32_t)cmd | SDIO_CMD_CPSMEN;
-  while ((sdcp->sdio->STA & SDIO_STA_CMDSENT) == 0)
-    ;
+  while ((sdcp->sdio->STA & SDIO_STA_CMDSENT) == 0U) {
+  }
   sdcp->sdio->ICR = SDIO_ICR_CMDSENTC;
 }
 
@@ -614,11 +614,11 @@ bool sdc_lld_send_cmd_short(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   sdcp->sdio->ARG = arg;
   sdcp->sdio->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_CPSMEN;
   while (((sta = sdcp->sdio->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
-                                     SDIO_STA_CCRCFAIL)) == 0)
+                                     SDIO_STA_CCRCFAIL)) == 0U)
     ;
   sdcp->sdio->ICR = sta & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                            SDIO_STA_CCRCFAIL);
-  if ((sta & (SDIO_STA_CTIMEOUT)) != 0) {
+  if ((sta & (SDIO_STA_CTIMEOUT)) != 0U) {
     sdc_lld_collect_errors(sdcp, sta);
     return HAL_FAILED;
   }
@@ -647,10 +647,10 @@ bool sdc_lld_send_cmd_short_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   sdcp->sdio->ARG = arg;
   sdcp->sdio->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_CPSMEN;
   while (((sta = sdcp->sdio->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
-                                     SDIO_STA_CCRCFAIL)) == 0)
+                                     SDIO_STA_CCRCFAIL)) == 0U)
     ;
   sdcp->sdio->ICR = sta & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL);
-  if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0) {
+  if ((sta & (SDIO_STA_CTIMEOUT | SDIO_STA_CCRCFAIL)) != 0U) {
     sdc_lld_collect_errors(sdcp, sta);
     return HAL_FAILED;
   }
@@ -682,11 +682,11 @@ bool sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
   sdcp->sdio->CMD = (uint32_t)cmd | SDIO_CMD_WAITRESP_0 | SDIO_CMD_WAITRESP_1 |
                                     SDIO_CMD_CPSMEN;
   while (((sta = sdcp->sdio->STA) & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
-                                     SDIO_STA_CCRCFAIL)) == 0)
+                                     SDIO_STA_CCRCFAIL)) == 0U)
     ;
   sdcp->sdio->ICR = sta & (SDIO_STA_CMDREND | SDIO_STA_CTIMEOUT |
                            SDIO_STA_CCRCFAIL);
-  if ((sta & (SDIO_STA_ERROR_MASK)) != 0) {
+  if ((sta & (SDIO_STA_ERROR_MASK)) != 0U) {
     sdc_lld_collect_errors(sdcp, sta);
     return HAL_FAILED;
   }
@@ -777,15 +777,15 @@ bool sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                       SDIO_MASK_DATAENDIE;
   sdcp->sdio->DLEN  = blocks * MMCSD_BLOCK_SIZE;
 
+  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == true)
+    goto error;
+
   /* Transaction starts just after DTEN bit setting.*/
   sdcp->sdio->DCTRL = SDIO_DCTRL_DTDIR |
                       SDIO_DCTRL_DBLOCKSIZE_3 |
                       SDIO_DCTRL_DBLOCKSIZE_0 |
                       SDIO_DCTRL_DMAEN |
                       SDIO_DCTRL_DTEN;
-
-  if (sdc_lld_prepare_read(sdcp, startblk, blocks, resp) == true)
-    goto error;
 
   if (sdc_lld_wait_transaction_end(sdcp, blocks, resp) == true)
     goto error;

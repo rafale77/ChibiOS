@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,18 +28,6 @@
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
-
-/**
- * @name    Serial status flags (legacy)
- * @{
- */
-#define SD_PARITY_ERROR         CHN_PARITY_ERROR
-#define SD_FRAMING_ERROR        CHN_FRAMING_ERROR
-#define SD_OVERRUN_ERROR        CHN_OVERRUN_ERROR
-#define SD_NOISE_ERROR          CHN_NOISE_ERROR
-#define SD_BREAK_DETECTED       CHN_BREAK_DETECTED
-#define SD_QUEUE_FULL_ERROR     CHN_BUFFER_FULL_ERROR
-/** @} */
 
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */

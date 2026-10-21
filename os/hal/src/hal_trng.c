@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -94,16 +94,17 @@ msg_t trngStart(TRNGDriver *trngp, const TRNGConfig *config) {
 
 #if defined(TRNG_LLD_ENHANCED_API)
   msg = trng_lld_start(trngp);
-#else
-  trng_lld_start(trngp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     trngp->state = TRNG_READY;
   }
   else {
     trngp->state = TRNG_STOP;
   }
+#else
+  trng_lld_start(trngp);
+  trngp->state = TRNG_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

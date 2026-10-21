@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -198,6 +198,7 @@ extern "C" {
   bool sdcGetInfo(SDCDriver *sdcp, BlockDeviceInfo *bdip);
   bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk);
   bool _sdc_wait_for_transfer_state(SDCDriver *sdcp);
+  bool _sdc_wait_for_transfer_state_nocrc(SDCDriver *sdcp);
 #ifdef __cplusplus
 }
 #endif

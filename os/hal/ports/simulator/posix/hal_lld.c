@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ void _sim_check_for_interrupts(void) {
   bool int_occurred = false;
 
 #if HAL_USE_SERIAL
-  if (sd_lld_interrupt_pending()) {
+  while (sd_lld_interrupt_pending()) {
     int_occurred = true;
   }
 #endif

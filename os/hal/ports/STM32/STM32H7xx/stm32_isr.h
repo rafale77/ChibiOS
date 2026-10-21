@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -203,6 +203,8 @@
 #define STM32_I2C3_ERROR_HANDLER            Vector164
 #define STM32_I2C4_EVENT_HANDLER            Vector1BC
 #define STM32_I2C4_ERROR_HANDLER            Vector1C0
+#define STM32_I2C5_EVENT_HANDLER            Vector2B4
+#define STM32_I2C5_ERROR_HANDLER            Vector2B8
 
 #define STM32_I2C1_EVENT_NUMBER             31
 #define STM32_I2C1_ERROR_NUMBER             32
@@ -212,6 +214,8 @@
 #define STM32_I2C3_ERROR_NUMBER             73
 #define STM32_I2C4_EVENT_NUMBER             95
 #define STM32_I2C4_ERROR_NUMBER             96
+#define STM32_I2C5_EVENT_NUMBER             157
+#define STM32_I2C5_ERROR_NUMBER             158
 
 /*
  * QUADSPI units.

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -148,6 +148,8 @@
 #define STM32_DMAMUX1_SAI3_A        113
 #define STM32_DMAMUX1_SAI3_B        114
 #define STM32_DMAMUX1_ADC3          115
+#define STM32_DMAMUX1_I2C5_RX       124
+#define STM32_DMAMUX1_I2C5_TX       125
 /** @} */
 
 /**

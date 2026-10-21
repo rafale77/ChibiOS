@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -76,7 +76,10 @@ static size_t sync_read(void *ip, uint8_t *bp, size_t n,
     msg_t msg;
 
     msg = sioSynchronizeRX(siop, timeout);
-    if (msg != MSG_OK) {
+    if (msg == SIO_MSG_ERRORS) {
+      (void) sioGetAndClearErrors(siop);
+    }
+    else if (msg != MSG_OK) {
       break;
     }
 
@@ -119,12 +122,18 @@ static msg_t __get(void *ip) {
   SIODriver *siop = (SIODriver *)ip;
   msg_t msg;
 
-  msg = sioSynchronizeRX(siop, TIME_INFINITE);
-  if (msg != MSG_OK) {
-    return msg;
-  }
+  while (true) {
+    msg = sioSynchronizeRX(siop, TIME_INFINITE);
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(siop);
+      continue;
+    }
+    if (msg != MSG_OK) {
+      return msg;
+    }
 
-  return sioGetX(siop);
+    return sioGetX(siop);
+  }
 }
 
 static msg_t __putt(void *ip, uint8_t b, sysinterval_t timeout) {
@@ -144,12 +153,18 @@ static msg_t __gett(void *ip, sysinterval_t timeout) {
   SIODriver *siop = (SIODriver *)ip;
   msg_t msg;
 
-  msg = sioSynchronizeRX(siop, timeout);
-  if (msg != MSG_OK) {
-    return msg;
-  }
+  while (true) {
+    msg = sioSynchronizeRX(siop, timeout);
+    if (msg == SIO_MSG_ERRORS) {
+      (void)sioGetAndClearErrors(siop);
+      continue;
+    }
+    if (msg != MSG_OK) {
+      return msg;
+    }
 
-  return sioGetX(siop);
+    return sioGetX(siop);
+  }
 }
 
 static size_t __writet(void *ip, const uint8_t *bp, size_t n,
@@ -265,13 +280,17 @@ msg_t sioStart(SIODriver *siop, const SIOConfig *config) {
     siop->state = SIO_STOP;
   }
 
+  /*lint -save -e9053 [12.2] MISRA seems to assume that the underlying type
+    is 8 bits wide, it is not.*/
 #if SIO_USE_SYNCHRONIZATION == TRUE
   /* If synchronization is enabled then all events by default.*/
-  sioWriteEnableFlagsX(siop, SIO_EV_ALL_EVENTS);
+  sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_ALL_EVENTS);
 #else
   /* If synchronization is disabled then no events by default.*/
-  sioWriteEnableFlagsX(siop, SIO_EV_NONE);
+  sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_ALL_EVENTS);
+  sioWriteEnableFlagsX(siop, (sioevents_t)SIO_EV_NONE);
 #endif
+  /*lint -restore*/
 
   osalSysUnlock();
 

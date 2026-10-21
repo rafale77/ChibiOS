@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * @file    TIMv1/stm32_tim3_4.inc
  * @brief   Shared TIM3, TIM4 handler.
  *
- * @addtogroup STM32_TIM3_TIM4_HANDLER
+ * @addtogroup STM32_TIM3_4_HANDLER
  * @{
  */
 
@@ -127,7 +127,7 @@ static inline void tim3_tim4_irq_deinit(void) {
  *
  * @isr
  */
-OSAL_IRQ_HANDLER(STM32_TIM3_TIM4_HANDLER) {
+OSAL_IRQ_HANDLER(STM32_TIM3_4_HANDLER) {
 
   OSAL_IRQ_PROLOGUE();
 

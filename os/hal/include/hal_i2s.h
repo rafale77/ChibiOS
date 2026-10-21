@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ struct hal_i2s_driver {
    */
   const I2SConfig           *config;
   /* End of the mandatory fields.*/
-  i2s_lld_driver_fields;
+  i2s_lld_driver_fields
 };
 
 /**
@@ -122,7 +122,7 @@ struct hal_i2s_config {
    */
   i2scallback_t             end_cb;
   /* End of the mandatory fields.*/
-  i2s_lld_config_fields;
+  i2s_lld_config_fields
 };
 
 /*===========================================================================*/
@@ -182,7 +182,7 @@ struct hal_i2s_config {
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] i2sp      pointer to the @p I2CDriver object
+ * @param[in] i2sp      pointer to the @p I2SDriver object
  *
  * @notapi
  */
@@ -201,7 +201,7 @@ struct hal_i2s_config {
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
- * @param[in] i2sp      pointer to the @p I2CDriver object
+ * @param[in] i2sp      pointer to the @p I2SDriver object
  *
  * @notapi
  */

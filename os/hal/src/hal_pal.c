@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -163,7 +163,6 @@ void palSetLineCallbackI(ioline_t line, palcallback_t cb, void *arg) {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @returns             The operation state.
  * @retval MSG_OK       if an edge has been detected.
  * @retval MSG_TIMEOUT  if a timeout occurred before an edge could be detected.
@@ -189,7 +188,6 @@ msg_t palWaitPadTimeoutS(ioportid_t port,
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @returns             The operation state.
  * @retval MSG_OK       if an edge has been detected.
  * @retval MSG_TIMEOUT  if a timeout occurred before an edge cound be detected.

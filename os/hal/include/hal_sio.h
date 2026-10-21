@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@
  * @name    Event flags (compatible with channel and serial events)
  * @{
  */
+/*lint -save -e9053 [12.2] MISRA seems to assume that the underlying type
+  is 8 bits wide, it is not.*/
 #define SIO_EV_NONE                     0U
 #define SIO_EV_RXNOTEMPY                (1U << SIO_EV_RXNOTEMPY_POS)
 #define SIO_EV_TXNOTFULL                (1U << SIO_EV_TXNOTFULL_POS)
@@ -71,13 +73,14 @@
                                          SIO_EV_ALL_ERRORS  |               \
                                          SIO_EV_TXDONE      |               \
                                          SIO_EV_RXIDLE)
+/*lint -restore*/
 /** @} */
 
 /**
  * @name    Additional messages
  * @{
  */
-#define SIO_MSG_ERRORS                  1
+#define SIO_MSG_ERRORS                  (msg_t)1
 /** @} */
 
 /*===========================================================================*/
@@ -152,7 +155,7 @@ typedef void (*siocb_t)(SIODriver *siop);
 typedef enum {
   SIO_UNINIT = 0,                   /**< Not initialized.                   */
   SIO_STOP = 1,                     /**< Stopped.                           */
-  SIO_READY = 2,                    /**< Ready.                             */
+  SIO_READY = 2                     /**< Ready.                             */
 } siostate_t;
 
 #include "hal_sio_lld.h"
@@ -164,8 +167,8 @@ typedef enum {
  */
 struct hal_sio_config {
   /* End of the mandatory fields.*/
-  sio_lld_config_fields;
-#if defined(SIO_CONFIG_EXT_FIELS)
+  sio_lld_config_fields
+#if defined(SIO_CONFIG_EXT_FIELDS)
   SIO_CONFIG_EXT_FIELDS
 #endif
 };
@@ -237,11 +240,11 @@ struct hal_sio_driver {
    */
   thread_reference_t        sync_txend;
 #endif /* SIO_USE_SYNCHRONIZATION == TRUE */
-#if defined(SIO_DRIVER_EXT_FIELS)
+#if defined(SIO_DRIVER_EXT_FIELDS)
   SIO_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  sio_lld_driver_fields;
+  sio_lld_driver_fields
 };
 
 /*===========================================================================*/
@@ -425,13 +428,13 @@ struct hal_sio_driver {
  *          be called from the @p rxne_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] size      maximum number of frames to read
  * @param[in] buffer    buffer for the received data
+ * @param[in] n         maximum number of frames to read
  * @return              The number of received frames.
  *
  * @xclass
  */
-#define sioAsyncReadX(siop, size, buffer) sio_lld_read(siop, size, buffer)
+#define sioAsyncReadX(siop, buffer, n) sio_lld_read(siop, buffer, n)
 
 /**
  * @brief   Writes data into the TX FIFO.
@@ -441,13 +444,13 @@ struct hal_sio_driver {
  *          be called from the @p txnf_cb callback handler.
  *
  * @param[in] siop      pointer to the @p SIODriver object
- * @param[in] size      maximum number of frames to read
- * @param[out] buffer   buffer containing the data to be transmitted
+ * @param[in] buffer    buffer containing the data to be transmitted
+ * @param[in] n         maximum number of frames to read
  * @return              The number of transmitted frames.
  *
  * @xclass
  */
-#define sioAsyncWriteX(siop, size, buffer) sio_lld_write(siop, size, buffer)
+#define sioAsyncWriteX(siop, buffer, n) sio_lld_write(siop, buffer, n)
 
 /**
  * @brief   Control operation on a serial port.

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@
  */
 #define sio_lld_driver_fields                                               \
   /* Pointer to the USARTx registers block.*/                               \
-  UART_TypeDef             *uart
+  UART_TypeDef             *uart;
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
@@ -124,7 +124,7 @@
   uint32_t                  UARTLCR_H;                                      \
   uint32_t                  UARTCR;                                         \
   uint32_t                  UARTIFLS;                                       \
-  uint32_t                  UARTDMACR
+  uint32_t                  UARTDMACR;
 
 /**
  * @brief   Determines the state of the RX FIFO.

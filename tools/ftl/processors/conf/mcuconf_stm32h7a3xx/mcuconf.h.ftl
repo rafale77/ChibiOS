@@ -1,13 +1,12 @@
 [#ftl]
 [#--
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
     ChibiOS is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License, or
-    (at your option) any later version.
+    the Free Software Foundation version 3 of the License.
 
     ChibiOS is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -330,7 +329,7 @@
 #define STM32_MAC_PHY_TIMEOUT               ${doc.STM32_MAC_PHY_TIMEOUT!"100"}
 #define STM32_MAC_ETH1_CHANGE_PHY_STATE     ${doc.STM32_MAC_ETH1_CHANGE_PHY_STATE!"TRUE"}
 #define STM32_MAC_ETH1_IRQ_PRIORITY         ${doc.STM32_MAC_ETH1_IRQ_PRIORITY!"13"}
-#define STM32_MAC_IP_CHECKSUM_OFFLOAD       ${doc.STM32_MAC_IP_CHECKSUM_OFFLOAD!"0"}
+#define STM32_MAC_IP_CHECKSUM_OFFLOAD       ${doc.STM32_MAC_IP_CHECKSUM_OFFLOAD!"FALSE"}
 
 /*
  * PWM driver system settings.

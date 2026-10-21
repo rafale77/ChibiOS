@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -101,9 +101,9 @@
 
 /* Some modes have a dependency on the PAL driver, making the required
    checks here.*/
-#if ((SPI_SELECT_MODE != SPI_SELECT_MODE_PAD)  ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_PORT) ||                           \
-     (SPI_SELECT_MODE != SPI_SELECT_MODE_LINE)) &&                          \
+#if ((SPI_SELECT_MODE == SPI_SELECT_MODE_PAD)  ||                           \
+     (SPI_SELECT_MODE == SPI_SELECT_MODE_PORT) ||                           \
+     (SPI_SELECT_MODE == SPI_SELECT_MODE_LINE)) &&                          \
     (HAL_USE_PAL != TRUE)
 #error "current SPI_SELECT_MODE requires HAL_USE_PAL"
 #endif
@@ -135,6 +135,7 @@ typedef struct hal_spi_config SPIConfig;
 
 /**
  * @brief   SPI notification callback type.
+ * @details The callback is invoked from ISR context.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
  *                              triggering the callback
@@ -171,6 +172,13 @@ struct hal_spi_config {
 #endif
   /**
    * @brief   Operation data callback or @p NULL.
+   * @details In linear mode the callback is invoked after the driver returns
+   *          to the @p SPI_READY state, this allows chaining another transfer
+   *          using I-Class APIs. In circular mode the callback is invoked in
+   *          either @p SPI_ACTIVE state (half buffer) or @p SPI_COMPLETE
+   *          state (full buffer).
+   * @note    If a synchronous API is waiting for completion then starting a
+   *          follow-on transfer from this callback is undefined.
    */
   spicb_t                   data_cb;
   /**
@@ -207,7 +215,7 @@ struct hal_spi_config {
   uint_fast8_t              sspad;
 #endif
   /* End of the mandatory fields.*/
-  spi_lld_config_fields;
+  spi_lld_config_fields
 };
 
 /**
@@ -238,7 +246,7 @@ struct hal_spi_driver {
   SPI_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  spi_lld_driver_fields;
+  spi_lld_driver_fields
 };
 
 /*===========================================================================*/
@@ -252,6 +260,9 @@ struct hal_spi_driver {
 /**
  * @brief   Buffer state.
  * @note    This function is meant to be called from the SPI callback only.
+ * @note    This state is only meaningful for circular transfers, where it is
+ *          used to distinguish the full buffer callback from the half buffer
+ *          callback.
  *
  * @param[in] spip              pointer to the @p SPIDriver object
  * @return                      The buffer state.
@@ -378,7 +389,7 @@ do {                                                                        \
  */
 #define __spi_wakeup_isr(spip, msg) {                                       \
   osalSysLockFromISR();                                                     \
-  osalThreadResumeI(&(spip)->sync_transfer, MSG_OK);                        \
+  osalThreadResumeI(&(spip)->sync_transfer, msg);                           \
   osalSysUnlockFromISR();                                                   \
 }
 #else /* !SPI_USE_SYNCHRONIZATION */
@@ -400,14 +411,9 @@ do {                                                                        \
  * @notapi
  */
 #define __spi_isr_complete_code(spip) {                                     \
+  (spip)->state = SPI_READY;                                                \
   if ((spip)->config->data_cb) {                                            \
-    (spip)->state = SPI_COMPLETE;                                           \
     (spip)->config->data_cb(spip);                                          \
-    if ((spip)->state == SPI_COMPLETE)                                      \
-      (spip)->state = SPI_READY;                                            \
-  }                                                                         \
-  else {                                                                    \
-    (spip)->state = SPI_READY;                                              \
   }                                                                         \
   __spi_wakeup_isr(spip, MSG_OK);                                           \
 }

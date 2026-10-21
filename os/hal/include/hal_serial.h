@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -178,7 +178,6 @@ struct hal_serial_driver {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The operation status.
  * @retval MSG_OK       if the operation succeeded.
  * @retval MSG_TIMEOUT  if the specified time expired.
@@ -227,7 +226,6 @@ struct hal_serial_driver {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              A byte value from the input queue.
  * @retval MSG_TIMEOUT  if the specified time expired.
  * @retval MSG_RESET    if the @p SerialDriver has been stopped.
@@ -282,7 +280,6 @@ struct hal_serial_driver {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  *
  * @api
@@ -352,7 +349,6 @@ struct hal_serial_driver {
  *                      the following special values are allowed:
  *                      - @a TIME_IMMEDIATE immediate timeout.
  *                      - @a TIME_INFINITE no timeout.
- *                      .
  * @return              The number of bytes effectively transferred.
  *
  * @api

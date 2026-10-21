@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@
 #endif
 
 /**
- * @brief   SIO driver 8 enable switch.
+ * @brief   LP SIO driver 1 enable switch.
  * @details If set to @p TRUE the support for LPUART1 is included.
  * @note    The default is @p FALSE.
  */
@@ -266,7 +266,7 @@
   /* Pointer to the USARTx registers block.*/                               \
   USART_TypeDef             *usart;                                         \
   /* Clock frequency for the associated USART/UART.*/                       \
-  uint32_t                  clock
+  uint32_t                  clock;
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
@@ -281,7 +281,7 @@
   /* USART CR2 register initialization data.*/                              \
   uint32_t                  cr2;                                            \
   /* USART CR3 register initialization data.*/                              \
-  uint32_t                  cr3
+  uint32_t                  cr3;
 
 /**
  * @brief   Determines the state of the RX FIFO.

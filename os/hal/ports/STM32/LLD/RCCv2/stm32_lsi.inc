@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    RCCv1/stm32_lsi.inc
+ * @file    RCCv2/stm32_lsi.inc
  * @brief   Shared LSI clock handler.
  *
  * @addtogroup STM32_LSI_HANDLER

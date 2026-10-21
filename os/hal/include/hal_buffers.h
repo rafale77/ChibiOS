@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ typedef struct io_buffers_queue io_buffers_queue_t;
 /**
  * @brief   Double buffer notification callback type.
  *
- * @param[in] iodbp     the buffers queue pointer
+ * @param[in] bqp       the buffers queue pointer
  */
 typedef void (*bqnotify_t)(io_buffers_queue_t *bqp);
 

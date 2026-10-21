@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -192,8 +191,8 @@ size_t path_add_separator(char *dst, size_t size) {
 size_t path_add_extension(char *dst, const char *ext, size_t size) {
   size_t dn, en;
 
-  dn = strnlen(dst, size - 1U);
-  en = strnlen(ext, size - 1U);
+  dn = strlen(dst);
+  en = strlen(ext);
   if ((dn < en) || (strcmp(dst + dn - en, ext) != 0)) {
     if (dn + en >= size) {
       return 0U;

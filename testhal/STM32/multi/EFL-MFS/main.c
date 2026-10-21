@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 
 #include "portab.h"
 
+#ifndef STM32F7xx_MCUCONF
 const MFSConfig mfscfg1 = {
   .flashp           = (BaseFlash *)&EFLD1,
   .erased           = 0xFFFFFFFFU,
@@ -34,6 +35,18 @@ const MFSConfig mfscfg1 = {
   .bank1_start      = 130U,
   .bank1_sectors    = 2U
 };
+#else
+/* 2Mb, single bank mode */
+const MFSConfig mfscfg1 = {
+  .flashp           = (BaseFlash *)&EFLD1,
+  .erased           = 0xFFFFFFFFU,
+  .bank_size        = 262144U,
+  .bank0_start      = 10U,
+  .bank0_sectors    = 1U,
+  .bank1_start      = 11U,
+  .bank1_sectors    = 1U
+};
+#endif
 
 /*
  * LED blinker thread, times are in milliseconds.

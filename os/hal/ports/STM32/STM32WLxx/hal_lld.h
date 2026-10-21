@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -837,7 +837,7 @@
 #define STM32_VOS1_PLLIN_MAX        16000000U
 #define STM32_VOS1_PLLIN_MIN        2660000U
 #define STM32_VOS1_PLLVCO_MAX       344000000U
-#define STM32_VOS1_PLLVCO_MIN       96000000U
+#define STM32_VOS1_PLLVCO_MIN       95950000U /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS1_PLLP_MAX         48000000U
 #define STM32_VOS1_PLLP_MIN         3000000U
 #define STM32_VOS1_PLLQ_MAX         48000000U
@@ -864,7 +864,7 @@
 #define STM32_VOS2_PLLIN_MAX        16000000U
 #define STM32_VOS2_PLLIN_MIN        2660000U
 #define STM32_VOS2_PLLVCO_MAX       128000000U
-#define STM32_VOS2_PLLVCO_MIN       96000000U
+#define STM32_VOS2_PLLVCO_MIN       95950000U /*Tolerance for MSIPLL real frequency.*/
 #define STM32_VOS2_PLLP_MAX         16000000U
 #define STM32_VOS2_PLLP_MIN         3000000U
 #define STM32_VOS2_PLLQ_MAX         12000000U
@@ -1225,7 +1225,7 @@
  */
 #if ((STM32_PLLM_VALUE >= 1) && (STM32_PLLM_VALUE <= 8)) ||                 \
     defined(__DOXYGEN__)
-#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << 4)
+#define STM32_PLLM                  ((STM32_PLLM_VALUE - 1) << RCC_PLLCFGR_PLLM_Pos)
 #else
 #error "invalid STM32_PLLM_VALUE value specified"
 #endif
@@ -1309,10 +1309,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_MSICLK
-
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 
 #elif (STM32_SW == STM32_SW_HSI16)
@@ -1669,17 +1666,7 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
-/**
- * @brief   Type of a clock point identifier.
- */
-typedef unsigned halclkpt_t;
-
 #if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
-/**
- * @brief   Type of a clock point frequency in Hz.
- */
-typedef uint32_t halfreq_t;
-
 /**
  * @brief   Type of a clock configuration structure.
  */

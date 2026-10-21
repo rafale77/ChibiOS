@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -744,7 +744,7 @@ static inline void osalEventObjectInit(event_source_t *esp) {
 }
 
 /**
- * @brief   Initializes s @p mutex_t object.
+ * @brief   Initializes a @p mutex_t object.
  *
  * @param[out] mp       pointer to the @p mutex_t object
  *

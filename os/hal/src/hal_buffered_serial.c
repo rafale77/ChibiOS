@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /**
- * @file    hal_buffered_serial.h
+ * @file    hal_buffered_serial.c
  * @brief   Buffered Serial Driver code.
  *
  * @addtogroup HAL_BUFFERED_SERIAL
@@ -67,7 +67,7 @@ void bsIncomingDataI(BufferedSerial *bsp, uint8_t b) {
   }
 
   if (iqPutI(&bsp->iqueue, b) < MSG_OK) {
-    chnAddFlagsI(bsp, SD_QUEUE_FULL_ERROR);
+    chnAddFlagsI(bsp, CHN_BUFFER_FULL_ERROR);
   }
 }
 

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -98,16 +98,17 @@ msg_t cryStart(CRYDriver *cryp, const CRYConfig *config) {
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
 #if defined(CRY_LLD_ENHANCED_API)
   msg = cry_lld_start(cryp);
-#else
-  cry_lld_start(cryp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     cryp->state = CRY_READY;
   }
   else {
     cryp->state = CRY_STOP;
   }
+#else
+  cry_lld_start(cryp);
+  cryp->state = CRY_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 #else
   cryp->state = CRY_READY;
   msg = HAL_RET_SUCCESS;
@@ -782,7 +783,7 @@ cryerror_t cryEncryptAES_GCM(CRYDriver *cryp,
  * @param[in] iv                128 bits input vector
  * @param[in] tag_size          size of the authentication tag, this number
  *                              must be between 1 and 16
- * @param[in] tag_in            buffer for the generated authentication tag
+ * @param[in] tag_in            buffer for the received authentication tag
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this

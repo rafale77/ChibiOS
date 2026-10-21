@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -87,13 +87,14 @@ msg_t spi_lld_start(SPIDriver *spip) {
     }
 
 #if PLATFORM_SPI_USE_SPI1 == TRUE
-    if (&SPID1 == spip) {
+    else if (&SPID1 == spip) {
 
     }
 #endif
 
     else {
       osalDbgAssert(false, "invalid SPI instance");
+      return HAL_RET_IS_INVALID;
     }
   }
 

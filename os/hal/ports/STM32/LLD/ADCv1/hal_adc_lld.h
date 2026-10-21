@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -323,14 +323,14 @@ typedef uint32_t adcerror_t;
   /* Pointer to associated DMA channel.*/                                   \
   const stm32_dma_stream_t  *dmastp;                                        \
   /* DMA mode bit mask.*/                                                   \
-  uint32_t                  dmamode
+  uint32_t                  dmamode;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_config_fields                                               \
   /* Dummy configuration, it is not needed.*/                               \
-  uint32_t                  dummy
+  uint32_t                  dummy;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
@@ -350,7 +350,7 @@ typedef uint32_t adcerror_t;
   /* ADC CHSELR register initialization data.                               \
      NOTE: The number of bits at logic level one in this register must      \
            be equal to the number in the @p num_channels field.*/           \
-  uint32_t                  chselr
+  uint32_t                  chselr;
 
 /**
  * @brief   Changes the value of the ADC CCR register.

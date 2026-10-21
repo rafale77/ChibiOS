@@ -73,8 +73,33 @@
 *** Releases and Change Log                                               ***
 *****************************************************************************
 
+*** 21.11.5 ***
+- NEW: STM32U0xx support.
+- NEW: STM32U3xx support.
+- FIX: Fixed OSLIB Jobs Queues: return JOB_NULL descriptors to the free pool
+       (bug #1304).
+- FIX: Fixed serialize ref duplication and harden dynamic object size
+       calculations (bug #1303).
+- FIX: Fixed harden memcore/heap boundary checks against arithmetic overflow
+       (bug #1302).
+- FIX: Fixed priority inheritance through prioritized message queues
+       (bug #1301).
+- FIX: Fixed  chMsgSend missing rdymsg assignment causes spurious NULL return
+       from chMsgWaitTimeoutS (bug #1300).
+- FIX: Fixed problem with queues counter in NIL (bug #1299).
+- FIX: Fixed problem with CH_PORT_SUPPORTS_RECURSIVE_LOCKS in NIL (bug #1298).
+
 *** 21.11.4 ***
-- NEW: Added missing con text switch hook in ARMv7-M-ALT port.
+- NEW: STM32C0xx support.
+- NEW: STM32G0B0 support.
+- NEW: STM32H5xx support.
+- NEW: FDCAN support for STM32G4xx, STM32H5xx and STM32H7xx.
+- NEW: XSNOR serial flash memories framework.
+- NEW: I2C slave support in HAL and in ST low level drivers.
+- NEW: Support for LittleFS flash file system.
+- NEW: VFS subsystem.
+- NEW: OOP framework.
+- NEW: Added missing context switch hook in ARMv7-M-ALT port.
 - NEW: FDCANv1 and FDCANv2 filter enabled.
 - NEW: Recursive locks in RT and NIL made optional, only enabled if the
        underlying port supports the capability.
@@ -90,12 +115,13 @@
        DHQC.
 - NEW: Reworked STM32 SDMMCv1 and SDMMCv2 drivers, better timeout and clock
        handling, improved speed for aligned buffers.
+- FIX: Set DAC_HAS_MCR FALSE in STM32F1xx registry.
 - FIX: Fixed ADCv4 common registers reset at start (bug 1296).
 - FIX: Fixed DMA2 not firing on STM32G431 (bug 1295).
 - FIX: Fixed wrong STM32 ADCv2 stop method (bug 1294).
 - FIX: Fixed STM32 OTGv1 driver does not re-enables endpoints on wakeup
        (bug 1293).
-- FIX: Fixed missing assertion in OSLIB factory module (bug 1292).
+- FIX: Fixed missing assertion in OSLIB factory module (bug #1292).
 - FIX: Fixed problem in FDCANv1 driver for G4 (bug #1291).
 - FIX: Fixed problem in recursive locks functions (bug #1288).
 - FIX: Fixed ARMv8-M-ML port compile fail when FPU is enabled (bug #1281).

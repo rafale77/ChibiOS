@@ -1,5 +1,5 @@
 /*
- ChibiOS - Copyright (C) 2006..2022 Giovanni Di Sirio
+ ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -49,6 +49,21 @@
 /*===========================================================================*/
 /* Module data structures and types.                                         */
 /*===========================================================================*/
+
+/**
+ * @brief   Binding object between LFS and HAL.
+ */
+typedef struct hal_lfs_binding {
+  /**
+   * @brief   Flash offset of an LFS area on flash.
+   * @note    Must be a multiple of the block size.
+   */
+  flash_sector_t            base;
+  /**
+   * @brief   Pointer to a flash interface.
+   */
+  BaseFlash                 *flp;
+} hal_lfs_binding_t;
 
 /*===========================================================================*/
 /* Module macros.                                                            */

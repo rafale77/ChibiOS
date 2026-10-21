@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -150,7 +149,7 @@ void __thd_stackfill(uint8_t *startp, uint8_t *endp) {
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
@@ -208,7 +207,7 @@ thread_t *chThdCreateSuspendedI(const thread_descriptor_t *tdp) {
  * @details The new thread is initialized but not inserted in the ready list,
  *          the initial state is @p CH_STATE_WTSTART.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @post    The initialized thread can be subsequently started by invoking
@@ -246,7 +245,7 @@ thread_t *chThdCreateSuspended(const thread_descriptor_t *tdp) {
  * @brief   Creates a new thread.
  * @details The new thread is initialized and make ready to execute.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
@@ -270,7 +269,7 @@ thread_t *chThdCreateI(const thread_descriptor_t *tdp) {
  * @brief   Creates a new thread.
  * @details The new thread is initialized and make ready to execute.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
@@ -306,7 +305,7 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
 /**
  * @brief   Creates a new thread.
  * @post    The created thread has a reference counter set to one, it is
- *          caller responsibility to call @p chThdRelease() or @p chthdWait()
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
  *          in order to release the reference. The thread persists in the
  *          registry until its reference counter reaches zero.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
@@ -415,10 +414,12 @@ thread_t *chThdAddRef(thread_t *tp) {
  *          returned to the proper allocator and the thread is removed
  *          from the registry.<br>
  *          Threads whose counter reaches zero and are still active become
- *          "detached" and will be removed from registry on termination.
+ *          "detached". Detached static threads will be removed from the
+ *          registry on termination. Detached non-static threads can only be
+ *          removed by performing a registry scan operation.
  * @pre     The configuration option @p CH_CFG_USE_REGISTRY must be enabled in
  *          order to use this function.
- * @note    Static threads are not affected.
+ * @note    Static threads are not affected, only removed from the registry.
  *
  * @param[in] tp        pointer to the thread
  *
@@ -542,7 +543,7 @@ void chThdExitS(msg_t msg) {
  * @details This function waits for the specified thread to terminate then
  *          decrements its reference counter, if the counter reaches zero then
  *          the thread working area is returned to the proper allocator and
- *          the thread is removed from registry.
+ *          the thread is removed from the registry.
  * @pre     The configuration option @p CH_CFG_USE_WAITEXIT must be enabled in
  *          order to use this function.
  * @post    Enabling @p chThdWait() requires 2-4 (depending on the

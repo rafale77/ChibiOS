@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -370,13 +369,10 @@ void chSysTimerHandlerI(void) {
         /* Timeout on queues/semaphores requires a special handling because
            the counter must be incremented.*/
         /*lint -save -e9013 [15.7] There is no else because it is not needed.*/
-#if CH_CFG_USE_SEMAPHORES == TRUE
         if (NIL_THD_IS_WTQUEUE(tp)) {
-          tp->u1.semp->cnt++;
+          tp->u1.tqp->cnt++;
         }
-        else
-#endif
-        if (NIL_THD_IS_SUSPENDED(tp)) {
+        else if (NIL_THD_IS_SUSPENDED(tp)) {
           *tp->u1.trp = NULL;
         }
         /*lint -restore*/
@@ -826,9 +822,6 @@ thread_t *chThdCreate(const thread_descriptor_t *tdp) {
  * @details The thread goes in the @p CH_STATE_FINAL state holding the
  *          specified exit status code, other threads can retrieve the
  *          exit status code by invoking the function @p chThdWait().
- * @post    Exiting a non-static thread that does not have references
- *          (detached) causes the thread to remain in the registry.
- *          It can only be removed by performing a registry scan operation.
  * @post    Eventual code after this function will never be executed,
  *          this function never returns. The compiler has no way to
  *          know this so do not assume that the compiler would remove

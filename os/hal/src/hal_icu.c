@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -93,16 +93,17 @@ msg_t icuStart(ICUDriver *icup, const ICUConfig *config) {
 
 #if defined(ICU_LLD_ENHANCED_API)
   msg = icu_lld_start(icup);
-#else
-  icu_lld_start(icup);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     icup->state = ICU_READY;
   }
   else {
     icup->state = ICU_STOP;
   }
+#else
+  icu_lld_start(icup);
+  icup->state = ICU_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

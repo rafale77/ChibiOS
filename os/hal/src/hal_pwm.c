@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -102,16 +102,17 @@ msg_t pwmStart(PWMDriver *pwmp, const PWMConfig *config) {
 
 #if defined(PWM_LLD_ENHANCED_API)
   msg = pwm_lld_start(pwmp);
-#else
-  pwm_lld_start(pwmp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     pwmp->state = PWM_READY;
   }
   else {
     pwmp->state = PWM_STOP;
   }
+#else
+  pwm_lld_start(pwmp);
+  pwmp->state = PWM_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

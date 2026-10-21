@@ -46,6 +46,12 @@ ifeq ($(USE_SMART_BUILD),)
   USE_SMART_BUILD = yes
 endif
 
+# If enabled, this option avoid to build the generic Flash Driver class.
+# This class use 32 bits pointers that generate some warning at AVR compilation process.
+ifeq ($(EXCLUDE_FLASH),)
+  EXCLUDE_FLASH = yes
+endif
+
 # If enable, this option arase the counter cycle after device programming.
 ifeq ($(USE_AVRDUDE_ERASE_COUNTER),)
 	USE_AVRDUDE_ERASE_COUNTER = no
@@ -156,7 +162,7 @@ HEX   = $(CP) -O ihex
 BIN   = $(CP) -O binary
 
 # Size of the elf binary file.
-ELFSIZE = $(SZ) --mcu=$(MCU) --format=avr $(BUILDDIR)/$(PROJECT).elf
+ELFSIZE = $(SZ) $(BUILDDIR)/$(PROJECT).elf
 
 # MCU specific options here.
 MOPT =

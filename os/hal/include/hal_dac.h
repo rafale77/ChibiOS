@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ typedef enum {
   DAC_STOP = 1,                     /**< Stopped.                           */
   DAC_READY = 2,                    /**< Ready.                             */
   DAC_ACTIVE = 3,                   /**< Exchanging data.                   */
-  DAC_COMPLETE = 4,                 /**< Asynchronous operation complete.   */
+  DAC_COMPLETE = 4,                 /**< Circular full buffer callback.     */
   DAC_ERROR = 5                     /**< Error.                             */
 } dacstate_t;
 
@@ -124,6 +124,11 @@ struct hal_dac_conversion_group {
   uint32_t                  num_channels;
   /**
    * @brief   Operation complete callback or @p NULL.
+   * @note    This callback is invoked from ISR context on half buffer and
+   *          full buffer events during the ongoing circular conversion. The
+   *          driver state is @p DAC_ACTIVE on half buffer callbacks and
+   *          @p DAC_COMPLETE on full buffer callbacks. Starting a new
+   *          conversion from this callback is not supported.
    */
   daccallback_t             end_cb;
   /**
@@ -131,7 +136,7 @@ struct hal_dac_conversion_group {
    */
   dacerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
-  dac_lld_conversion_group_fields;
+  dac_lld_conversion_group_fields
 };
 
 /**
@@ -139,7 +144,7 @@ struct hal_dac_conversion_group {
  */
 struct hal_dac_config {
   /* End of the mandatory fields.*/
-  dac_lld_config_fields;
+  dac_lld_config_fields
 };
 
 /**
@@ -182,7 +187,7 @@ struct hal_dac_driver {
   DAC_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
-  dac_lld_driver_fields;
+  dac_lld_driver_fields
 };
 
 /*===========================================================================*/
@@ -196,6 +201,8 @@ struct hal_dac_driver {
 /**
  * @brief   Buffer state.
  * @note    This function is meant to be called from the DAC callback only.
+ * @note    This function is meaningful for circular conversion callbacks
+ *          only.
  *
  * @param[in] dacp      pointer to the @p DACDriver object
  * @return              The buffer state.
@@ -212,7 +219,7 @@ struct hal_dac_driver {
 /**
  * @brief   Waits for operation completion.
  * @details This function waits for the driver to complete the current
- *          operation.
+ *          conversion cycle.
  * @pre     An operation must be running while the function is invoked.
  * @note    No more than one thread can wait on a DAC driver using
  *          this function.
@@ -298,7 +305,8 @@ struct hal_dac_driver {
  * @details This code handles the portable part of the ISR code:
  *          - Callback invocation.
  *          - Driver state transitions.
- *          .
+ * @details The @p DAC_COMPLETE state is used only as a transient full buffer
+ *          callback marker during the ongoing circular conversion.
  * @note    This macro is meant to be used in the low level drivers
  *          implementation only.
  *
@@ -351,19 +359,19 @@ struct hal_dac_driver {
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void dacInit(void);
-  void dacObjectInit(DACDriver *dacp);
+  void  dacInit(void);
+  void  dacObjectInit(DACDriver *dacp);
   msg_t dacStart(DACDriver *dacp, const DACConfig *config);
-  void dacStop(DACDriver *dacp);
-  void dacPutChannelX(DACDriver *dacp,
+  void  dacStop(DACDriver *dacp);
+  msg_t dacPutChannelX(DACDriver *dacp,
                       dacchannel_t channel,
                       dacsample_t sample);
-  void dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
+  msg_t dacStartConversion(DACDriver *dacp, const DACConversionGroup *grpp,
                           dacsample_t *samples, size_t depth);
-  void dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,
+  msg_t dacStartConversionI(DACDriver *dacp, const DACConversionGroup *grpp,
                            dacsample_t *samples, size_t depth);
-  void dacStopConversion(DACDriver *dacp);
-  void dacStopConversionI(DACDriver *dacp);
+  void  dacStopConversion(DACDriver *dacp);
+  void  dacStopConversionI(DACDriver *dacp);
 #if DAC_USE_SYNCHRONIZATION
   msg_t dacConvert(DACDriver *dacp, const DACConversionGroup *grpp,
                    dacsample_t *samples, size_t depth);
@@ -371,8 +379,8 @@ extern "C" {
   msg_t dacSynchronize(DACDriver *dacp, sysinterval_t timeout);
 #endif /* DAC_USE_SYNCHRONIZATION */
 #if DAC_USE_MUTUAL_EXCLUSION
-  void dacAcquireBus(DACDriver *dacp);
-  void dacReleaseBus(DACDriver *dacp);
+  void  dacAcquireBus(DACDriver *dacp);
+  void  dacReleaseBus(DACDriver *dacp);
 #endif
 #ifdef __cplusplus
 }

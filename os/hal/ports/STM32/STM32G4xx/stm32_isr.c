@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -71,6 +71,11 @@
 #include "stm32_fdcan2.inc"
 #include "stm32_fdcan3.inc"
 
+#include "stm32_i2c1.inc"
+#include "stm32_i2c2.inc"
+#include "stm32_i2c3.inc"
+#include "stm32_i2c4.inc"
+
 #include "stm32_usart1.inc"
 #include "stm32_usart2.inc"
 #include "stm32_usart3.inc"
@@ -118,6 +123,11 @@ void irqInit(void) {
   fdcan2_irq_init();
   fdcan3_irq_init();
 
+  i2c1_irq_init();
+  i2c2_irq_init();
+  i2c3_irq_init();
+  i2c4_irq_init();
+
   tim1_tim15_tim16_tim17_irq_init();
   tim2_irq_init();
   tim3_irq_init();
@@ -161,6 +171,11 @@ void irqDeinit(void) {
   fdcan1_irq_deinit();
   fdcan2_irq_deinit();
   fdcan3_irq_deinit();
+
+  i2c1_irq_deinit();
+  i2c2_irq_deinit();
+  i2c3_irq_deinit();
+  i2c4_irq_deinit();
 
   tim1_tim15_tim16_tim17_irq_deinit();
   tim2_irq_deinit();

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -65,13 +65,13 @@
  * @brief   Low level fields of the SIO driver structure.
  */
 #define sio_lld_driver_fields                                               \
-  uint32_t dummy
+  uint32_t dummy;
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
  */
 #define sio_lld_config_fields                                               \
-  uint32_t dummy
+  uint32_t dummy;
 
 /**
  * @brief   Determines the state of the RX FIFO.
@@ -83,6 +83,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_rx_empty(siop) false
 
 /**
@@ -95,6 +96,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_rx_idle(siop) false
 
 /**
@@ -109,6 +111,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_has_rx_errors(siop) false
 
 /**
@@ -121,6 +124,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_tx_full(siop) false
 
 /**
@@ -133,6 +137,7 @@
  *
  * @notapi
  */
+/*lint -e506 -e774 [2.1, 14.3] It is a constant because this is a template file.*/
 #define sio_lld_is_tx_ongoing(siop) false
 
 /*===========================================================================*/

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ typedef struct {
   /* Callback pointer.*/                                                    \
   rtccb_t           callback;                                               \
   RTCDateTime       alarm;                                                  \
-  rtcdtmask_t       mask
+  rtcdtmask_t       mask;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -438,7 +438,7 @@
   /* Sink for discarded data.*/                                             \
   uint32_t                  rxsink;                                         \
   /* Source for default TX pattern.*/                                       \
-  uint32_t                  txsource
+  uint32_t                  txsource;
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
@@ -447,7 +447,7 @@
   /* SPI CR1 register initialization data.*/                                \
   uint16_t                  cr1;                                            \
   /* SPI CR2 register initialization data.*/                                \
-  uint16_t                  cr2
+  uint16_t                  cr2;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

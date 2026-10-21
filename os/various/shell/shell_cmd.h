@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -61,8 +61,12 @@
 #define SHELL_CMD_TEST_ENABLED              TRUE
 #endif
 
+#if !defined(SHELL_CMD_FILES_ENABLED) || defined(__DOXYGEN__)
+#define SHELL_CMD_FILES_ENABLED             FALSE
+#endif
+
 #if !defined(SHELL_CMD_TEST_WA_SIZE) || defined(__DOXYGEN__)
-#define SHELL_CMD_TEST_WA_SIZE              THD_WORKING_AREA_SIZE(256)
+#define SHELL_CMD_TEST_WA_SIZE              THD_WORKING_AREA_SIZE(512)
 #endif
 
 /*===========================================================================*/
@@ -79,6 +83,10 @@
 
 #if (SHELL_CMD_THREADS_ENABLED == TRUE) && (CH_CFG_USE_REGISTRY == FALSE)
 #error "SHELL_CMD_THREADS_ENABLED requires CH_CFG_USE_REGISTRY"
+#endif
+
+#if (SHELL_CMD_FILES_ENABLED == TRUE) && (CH_CFG_USE_HEAP == FALSE)
+#error "SHELL_CMD_FILES_ENABLED requires CH_CFG_USE_HEAP"
 #endif
 
 /*===========================================================================*/

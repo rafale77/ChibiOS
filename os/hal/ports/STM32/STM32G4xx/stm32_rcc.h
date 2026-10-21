@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -590,34 +590,6 @@
  * @api
  */
 #define rccResetPWRInterface() rccResetAPB1R1(RCC_APB1RSTR1_PWRRST)
-/** @} */
-
-/**
- * @name    FDCAN peripherals specific RCC operations
- * @{
- */
-/**
- * @brief   Enables the FDCAN1 peripheral clock.
- *
- * @param[in] lp        low power enable flag
- *
- * @api
- */
-#define rccEnableFDCAN1(lp) rccEnableAPB1R1(RCC_APB1ENR1_FDCANEN, lp)
-
-/**
- * @brief   Disables the FDCAN1 peripheral clock.
- *
- * @api
- */
-#define rccDisableFDCAN1() rccDisableAPB1R1(RCC_APB1ENR1_FDCANEN)
-
-/**
- * @brief   Resets the FDCAN1 peripheral.
- *
- * @api
- */
-#define rccResetFDCAN1() rccResetAPB1R1(RCC_APB1RSTR1_FDCANRST)
 /** @} */
 
 /**

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -359,6 +359,36 @@ OSAL_IRQ_HANDLER(STM32_RTC_COMMON_HANDLER) {
 }
 #endif /* !defined(STM32_RTC_SUPPRESS_COMMON_ISR) */
 
+#elif defined(STM32_RTC_GLOBAL_HANDLER) &&                                  \
+      defined(STM32_RTC_TAMP_HANDLER)
+/**
+ * @brief   RTC global interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_GLOBAL_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  rtc_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+
+/**
+ * @brief   RTC TAMP interrupt handler.
+ *
+ * @isr
+ */
+OSAL_IRQ_HANDLER(STM32_RTC_TAMP_HANDLER) {
+
+  OSAL_IRQ_PROLOGUE();
+
+  rtc_lld_serve_interrupt();
+
+  OSAL_IRQ_EPILOGUE();
+}
+
 #elif defined(STM32_RTC_TAMP_STAMP_HANDLER) &&                              \
       defined(STM32_RTC_WKUP_HANDLER) &&                                    \
       defined(STM32_RTC_ALARM_HANDLER)
@@ -375,6 +405,7 @@ OSAL_IRQ_HANDLER(STM32_RTC_TAMP_STAMP_HANDLER) {
 
   OSAL_IRQ_EPILOGUE();
 }
+
 /**
  * @brief   RTC wakeup interrupt handler.
  *

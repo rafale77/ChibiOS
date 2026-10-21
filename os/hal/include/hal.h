@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -52,22 +52,22 @@
 /**
  * @brief   HAL version string.
  */
-#define CH_HAL_VERSION          "8.4.1"
+#define CH_HAL_VERSION          "9.1.0"
 
 /**
  * @brief   HAL version major number.
  */
-#define CH_HAL_MAJOR            8
+#define CH_HAL_MAJOR            9
 
 /**
  * @brief   HAL version minor number.
  */
-#define CH_HAL_MINOR            4
+#define CH_HAL_MINOR            1
 
 /**
  * @brief   HAL version patch number.
  */
-#define CH_HAL_PATCH            1
+#define CH_HAL_PATCH            0
 /** @} */
 
 /**
@@ -117,6 +117,10 @@
  * @brief   Unknown control code.
  */
 #define HAL_RET_UNKNOWN_CTL     (msg_t)-20
+/**
+ * @brief   Invalid instance pointer.
+ */
+#define HAL_RET_IS_INVALID      (msg_t)-21
 /** @} */
 
 /*===========================================================================*/
@@ -132,7 +136,7 @@
 #error "invalid configuration file"
 #endif
 
-#if !defined(_CHIBIOS_HAL_CONF_VER_8_4_)
+#if !defined(_CHIBIOS_HAL_CONF_VER_9_1_)
 #error "obsolete or unknown configuration file"
 #endif
 
@@ -229,6 +233,16 @@
 /* Driver data structures and types.                                         */
 /*===========================================================================*/
 
+/**
+ * @brief   Type of a clock point identifier.
+ */
+typedef unsigned halclkpt_t;
+
+/**
+ * @brief   Type of a clock point frequency in Hz.
+ */
+typedef uint32_t halfreq_t;
+
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
@@ -252,22 +266,6 @@ extern "C" {
 /* Driver inline functions.                                                  */
 /*===========================================================================*/
 
-#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
-/**
- * @brief   Switches to a different clock configuration
- *
- * @param[in] ccp       pointer to clock a @p halclkcfg_t structure
- * @return              The clock switch result.
- * @retval false        if the clock switch succeeded
- * @retval true         if the clock switch failed
- *
- * @special
- */
-static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
-
-  return hal_lld_clock_switch_mode(ccp);
-}
-
 /**
  * @brief   Returns the frequency of a clock point in Hz.
  *
@@ -279,7 +277,25 @@ static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
  */
 static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 
+  (void)clkpt;  /* LLD macro could not use it.*/
+
   return hal_lld_get_clock_point(clkpt);
+}
+
+#if defined(HAL_LLD_USE_CLOCK_MANAGEMENT) || defined(__DOXYGEN__)
+/**
+ * @brief   Switches to a different clock configuration
+ *
+ * @param[in] ccp       pointer to a @p halclkcfg_t structure
+ * @return              The clock switch result.
+ * @retval false        if the clock switch succeeded
+ * @retval true         if the clock switch failed
+ *
+ * @special
+ */
+static inline bool halClockSwitchMode(const halclkcfg_t *ccp) {
+
+  return hal_lld_clock_switch_mode(ccp);
 }
 #endif /* defined(HAL_LLD_USE_CLOCK_MANAGEMENT) */
 
@@ -298,6 +314,7 @@ static inline halfreq_t halClockGetPointX(halclkpt_t clkpt) {
 #include "hal_flash.h"
 
 /* Shared headers.*/
+#include "hal_safety.h"
 #include "hal_buffers.h"
 #include "hal_queues.h"
 #include "hal_buffered_serial.h"

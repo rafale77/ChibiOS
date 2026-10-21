@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
 */
 
 /**
- * @file    STM32L4xx/cmparams.h
- * @brief   ARM Cortex-M4 parameters for the STM32L4xx.
+ * @file    STM32L5xx/cmparams.h
+ * @brief   ARM Cortex-M33 parameters for the STM32L5xx.
  *
- * @defgroup ARMCMx_STM32L4xx STM32L4xx Specific Parameters
+ * @defgroup ARMCMx_STM32L5xx STM32L5xx Specific Parameters
  * @ingroup ARMCMx_SPECIFIC
  * @details This file contains the Cortex-M4 specific parameters for the
- *          STM32L4xx platform.
+ *          STM32L5xx platform.
  * @{
  */
 
@@ -41,7 +41,7 @@
 /**
  * @brief   Number of bits in priority masks.
  */
-#define CORTEX_PRIORITY_BITS    3
+#define CORTEX_PRIORITY_BITS    3U
 
 /* If the device type is not externally defined, for example from the Makefile,
    then a file named board.h is included. This file must contain a device
@@ -56,6 +56,16 @@
  *          rounded to a multiple of 8.
  */
 #define CORTEX_NUM_VECTORS      112
+
+/**
+ * @brief   Number of MPU regions.
+ */
+#define CORTEX_MPU_REGIONS      8
+
+/**
+ * @brief   Number of secure MPU regions.
+ */
+#define CORTEX_MPU_S_REGIONS    8
 
 /* The following code is not processed when the file is included from an
    asm module.*/

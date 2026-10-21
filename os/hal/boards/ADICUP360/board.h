@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -78,7 +78,6 @@
 #define GP2_5                       5U
 #define GP2_6                       6U
 #define GP2_7                       7U
-
 
 /*
  * IO lines assignments.

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -208,7 +208,7 @@ typedef struct hal_rtc_wakeup {
   /* Pointer to the RTC registers block.*/                                  \
   RTC_TypeDef               *rtc;                                           \
   /* Callback pointer.*/                                                    \
-  rtccb_t           callback
+  rtccb_t           callback;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@
   /* Number of bytes yet to be transmitted.*/                               \
   uint32_t              txcnt;                                              \
   /* Transmit pointer or @p NULL.*/                                         \
-  const void            *txptr
+  const void            *txptr;
 
 /**
  * @brief   Low level fields of the SPI configuration structure.
@@ -107,7 +107,7 @@
   /* SSP CR0 initialization data.*/                                         \
   uint16_t                  cr0;                                            \
   /* SSP CPSR initialization data.*/                                        \
-  uint32_t                  cpsr
+  uint32_t                  cpsr;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

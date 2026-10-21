@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -487,20 +487,28 @@ static bool mmc_set_bus_width(SDCDriver *sdcp) {
  * @brief   Wait for the card to complete pending operations.
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
- *
+ * @param[in] crc_check CRC check flag
+
  * @return              The operation status.
  * @retval HAL_SUCCESS  operation succeeded.
  * @retval HAL_FAILED   operation failed.
  *
  * @notapi
  */
-bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
+static bool _sdc_wait_for_transfer_state_internal(SDCDriver *sdcp,
+                                                  bool crc_check) {
   uint32_t resp[1];
+  bool cmd_fail;
 
   while (true) {
-    if (sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS,
-                                   sdcp->rca, resp) ||
-        MMCSD_R1_ERROR(resp[0])) {
+    if (crc_check) {
+      cmd_fail = sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_SEND_STATUS, sdcp->rca, resp);
+    }
+    else {
+      cmd_fail = sdc_lld_send_cmd_short(sdcp, MMCSD_CMD_SEND_STATUS, sdcp->rca, resp);
+    }
+
+    if (cmd_fail || MMCSD_R1_ERROR(resp[0])) {
       return HAL_FAILED;
     }
 
@@ -525,6 +533,38 @@ bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
+
+/**
+ * @brief   Wait for the card to complete pending operations with CRC check.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+bool _sdc_wait_for_transfer_state(SDCDriver *sdcp) {
+
+  return _sdc_wait_for_transfer_state_internal(sdcp, true);
+}
+
+/**
+ * @brief   Wait for the card to complete pending operations without CRC check.
+ *
+ * @param[in] sdcp      pointer to the @p SDCDriver object
+ *
+ * @return              The operation status.
+ * @retval HAL_SUCCESS  operation succeeded.
+ * @retval HAL_FAILED   operation failed.
+ *
+ * @notapi
+ */
+bool _sdc_wait_for_transfer_state_nocrc(SDCDriver *sdcp) {
+
+  return _sdc_wait_for_transfer_state_internal(sdcp, false);
+}
 
 /**
  * @brief   SDC Driver initialization.
@@ -578,16 +618,17 @@ msg_t sdcStart(SDCDriver *sdcp, const SDCConfig *config) {
 
 #if defined(SDC_LLD_ENHANCED_API)
   msg = sdc_lld_start(sdcp);
-#else
-  sdc_lld_start(sdcp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     sdcp->state = BLK_ACTIVE;
   }
   else {
     sdcp->state = BLK_STOP;
   }
+#else
+  sdc_lld_start(sdcp);
+  sdcp->state = BLK_ACTIVE;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 
@@ -689,10 +730,16 @@ bool sdcConnect(SDCDriver *sdcp) {
   }
 
   /* Switches to high speed.*/
-  if (HAL_SUCCESS != detect_bus_clk(sdcp, &clk)) {
+  if (detect_bus_clk(sdcp, &clk) != HAL_SUCCESS) {
     goto failed;
   }
   sdc_lld_set_data_clk(sdcp, clk);
+
+  /* Not checking CRC here according to JEDEC Standard No. 84-B51 6.6.2 */
+  if (_sdc_wait_for_transfer_state_nocrc(sdcp) != HAL_SUCCESS) {
+    goto failed;
+  }
+
 
   /* Reads extended CSD if needed and possible.*/
   if (SDC_MODE_CARDTYPE_MMC == (sdcp->cardmode & SDC_MODE_CARDTYPE_MASK)) {
@@ -734,7 +781,7 @@ bool sdcConnect(SDCDriver *sdcp) {
     }
     break;
   case SDC_MODE_CARDTYPE_MMC:
-    if (HAL_FAILED == mmc_set_bus_width(sdcp)) {
+    if (mmc_set_bus_width(sdcp) == HAL_FAILED) {
       goto failed;
     }
     break;
@@ -814,7 +861,7 @@ bool sdcRead(SDCDriver *sdcp, uint32_t startblk, uint8_t *buf, uint32_t n) {
   osalDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0U));
   osalDbgAssert(sdcp->state == BLK_READY, "invalid state");
 
-  if ((startblk + n - 1U) > sdcp->capacity) {
+  if ((startblk >= sdcp->capacity) || (n > (sdcp->capacity - startblk))) {
     sdcp->errors |= SDC_OVERFLOW_ERROR;
     return HAL_FAILED;
   }
@@ -836,7 +883,7 @@ bool sdcRead(SDCDriver *sdcp, uint32_t startblk, uint8_t *buf, uint32_t n) {
  *
  * @param[in] sdcp      pointer to the @p SDCDriver object
  * @param[in] startblk  first block to write
- * @param[out] buf      pointer to the write buffer
+ * @param[in] buf       pointer to the write buffer
  * @param[in] n         number of blocks to write
  *
  * @return              The operation status.
@@ -852,7 +899,7 @@ bool sdcWrite(SDCDriver *sdcp, uint32_t startblk,
   osalDbgCheck((sdcp != NULL) && (buf != NULL) && (n > 0U));
   osalDbgAssert(sdcp->state == BLK_READY, "invalid state");
 
-  if ((startblk + n - 1U) > sdcp->capacity) {
+  if ((startblk >= sdcp->capacity) || (n > (sdcp->capacity - startblk))) {
     sdcp->errors |= SDC_OVERFLOW_ERROR;
     return HAL_FAILED;
   }
@@ -963,6 +1010,13 @@ bool sdcErase(SDCDriver *sdcp, uint32_t startblk, uint32_t endblk) {
   osalDbgCheck((sdcp != NULL));
   osalDbgAssert(sdcp->state == BLK_READY, "invalid state");
 
+  if ((startblk >= sdcp->capacity) ||
+      (endblk >= sdcp->capacity) ||
+      (endblk < startblk)) {
+    sdcp->errors |= SDC_OVERFLOW_ERROR;
+    return HAL_FAILED;
+  }
+
   /* Erase operation in progress.*/
   sdcp->state = BLK_WRITING;
 
@@ -1013,4 +1067,3 @@ failed:
 #endif /* HAL_USE_SDC == TRUE */
 
 /** @} */
-

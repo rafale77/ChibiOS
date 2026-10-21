@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@
  *          - STM32_HSE_BYPASS (optionally).
  *          .
  *          One of the following macros must also be defined:
- *          - STM32L422xx, STM32L432xx, STM32L433xx, STM32L443xx.
- *          - STM32L471xx, STM32L475xx, STM32L476xx, STM32L496xx.
- *          - STM32L485xx, STM32L486xx, STM32L4A6xx.
+ *          - STM32L422xx, STM32L431xx, STM32L432xx, STM32L433xx.
+ *          - STM32L443xx, STM32L471xx, STM32L475xx, STM32L476xx.
+ *          - STM32L496xx, STM32L485xx, STM32L486xx, STM32L4A6xx.
  *          .
  *
  * @addtogroup HAL
@@ -53,10 +53,10 @@
  * @name    Platform identification
  * @{
  */
-#if defined(STM32L422xx) || defined(STM32L432xx) || defined(STM32L433xx) || \
-    defined(STM32L443xx) || defined(STM32L452xx) || defined(STM32L471xx) || \
-    defined(STM32L475xx) || defined(STM32L476xx) || defined(STM32L496xx) || \
-    defined(__DOXYGEN__)
+#if defined(STM32L422xx) || defined(STM32L431xx) || defined(STM32L432xx) || \
+    defined(STM32L433xx) || defined(STM32L443xx) || defined(STM32L452xx) || \
+    defined(STM32L471xx) || defined(STM32L475xx) || defined(STM32L476xx) || \
+    defined(STM32L496xx) || defined(__DOXYGEN__)
 #define PLATFORM_NAME           "STM32L4xx Ultra Low Power"
 
 #elif defined(STM32L485xx) || defined(STM32L486xx) || defined(STM32L4A6xx)
@@ -252,10 +252,10 @@
  * @name    RCC_CCIPR2 register bits definitions
  * @{
  */
-#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C1SEL mask.              */
-#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C1 source is PCLK1.      */
-#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C1 source is SYSCLK.     */
-#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C1 source is HSI16.      */
+#define STM32_I2C4SEL_MASK      (3 << 0)    /**< I2C4SEL mask.              */
+#define STM32_I2C4SEL_PCLK1     (0 << 0)    /**< I2C4 source is PCLK1.      */
+#define STM32_I2C4SEL_SYSCLK    (1 << 0)    /**< I2C4 source is SYSCLK.     */
+#define STM32_I2C4SEL_HSI16     (2 << 0)    /**< I2C4 source is HSI16.      */
 /** @} */
 
 /**
@@ -723,6 +723,10 @@
 #error "Using a wrong mcuconf.h file, STM32L422_MCUCONF not defined"
 #endif
 
+#if defined(STM32L431xx) && !defined(STM32L431_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L431_MCUCONF not defined"
+#endif
+
 #if defined(STM32L432xx) && !defined(STM32L432_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L432_MCUCONF not defined"
 #endif
@@ -810,7 +814,7 @@
 /**
  * @brief   Minimum PLLs input clock frequency.
  */
-#define STM32_PLLIN_MIN             4000000
+#define STM32_PLLIN_MIN             3995000 /*Tolerance for MSIPLL real frequency.*/
 
 /**
  * @brief   Maximum VCO clock frequency at current voltage setting.
@@ -820,7 +824,7 @@
 /**
  * @brief   Minimum VCO clock frequency at current voltage setting.
  */
-#define STM32_PLLVCO_MIN            64000000
+#define STM32_PLLVCO_MIN            63950000 /*Tolerance for MSIPLL real frequency.*/
 
 /**
  * @brief   Maximum PLL-P output clock frequency.
@@ -889,7 +893,7 @@
 #define STM32_LSECLK_MIN            32768
 #define STM32_LSECLK_BYP_MIN        32768
 #define STM32_PLLIN_MAX             16000000
-#define STM32_PLLIN_MIN             4000000
+#define STM32_PLLIN_MIN             3995000 /*Tolerance for MSIPLL real frequency.*/
 #define STM32_PLLVCO_MAX            128000000
 #define STM32_PLLVCO_MIN            64000000
 #define STM32_PLLP_MAX              26000000
@@ -1179,10 +1183,7 @@
 /**
  * @brief   System clock source.
  */
-#if STM32_NO_INIT || defined(__DOXYGEN__)
-#define STM32_SYSCLK                STM32_MSICLK
-
-#elif (STM32_SW == STM32_SW_MSI)
+#if (STM32_SW == STM32_SW_MSI)
 #define STM32_SYSCLK                STM32_MSICLK
 
 #elif (STM32_SW == STM32_SW_HSI16)
@@ -1800,6 +1801,18 @@
 /*===========================================================================*/
 /* Driver macros.                                                            */
 /*===========================================================================*/
+
+/**
+ * @brief   Returns the frequency of a clock point in Hz.
+ * @note    Static implementation.
+ *
+ * @param[in] clkpt     clock point to be returned
+ * @return              The clock point frequency in Hz or zero if the
+ *                      frequency is unknown.
+ *
+ * @notapi
+ */
+#define hal_lld_get_clock_point(clkpt) 0U
 
 /*===========================================================================*/
 /* External declarations.                                                    */

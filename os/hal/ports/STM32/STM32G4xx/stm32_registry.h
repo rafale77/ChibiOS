@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2019 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,6 +33,19 @@
  * @name    STM32G4xx capabilities
  * @{
  */
+
+/* DBGMCU helpers.*/
+#define STM32_DBGMCU_TIM1_STOP()            DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM1_STOP
+#define STM32_DBGMCU_TIM2_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM2_STOP
+#define STM32_DBGMCU_TIM3_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM3_STOP
+#define STM32_DBGMCU_TIM4_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM4_STOP
+#define STM32_DBGMCU_TIM5_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM5_STOP
+#define STM32_DBGMCU_TIM6_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM6_STOP
+#define STM32_DBGMCU_TIM7_STOP()            DBGMCU->APB1FZR1 |= DBGMCU_APB1FZR1_DBG_TIM7_STOP
+#define STM32_DBGMCU_TIM8_STOP()            DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM8_STOP_Msk
+#define STM32_DBGMCU_TIM15_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM15_STOP
+#define STM32_DBGMCU_TIM16_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM16_STOP
+#define STM32_DBGMCU_TIM17_STOP()           DBGMCU->APB2FZ |= DBGMCU_APB2FZ_DBG_TIM17_STOP
 
 /*===========================================================================*/
 /* Common.                                                                   */
@@ -189,6 +202,7 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+#define STM32_I2C_SINGLE_IRQ                FALSE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -400,6 +414,10 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#define STM32_I2C_SINGLE_IRQ                FALSE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -611,6 +629,10 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#define STM32_I2C_SINGLE_IRQ                FALSE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE
@@ -822,6 +844,10 @@
                                              RCC_AHB2ENR_GPIOGEN)
 
 /* I2C attributes.*/
+  /*
+   * TODO EL Future support for I2Cv4
+   */
+#define STM32_I2C_SINGLE_IRQ                FALSE
 #define STM32_HAS_I2C1                      TRUE
 #define STM32_HAS_I2C2                      TRUE
 #define STM32_HAS_I2C3                      TRUE

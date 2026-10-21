@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -451,7 +451,7 @@ void bus_cmd(BUSDriver *busp, uint32_t cmd) {
  *
  * @param[in] busp      pointer to the bus driver
  * @param[in] cmd       instruction code
- * @param[in] n         number of bytes to receive
+ * @param[in] n         number of bytes to transmit
  * @param[in] p         data buffer
  *
  * @notapi

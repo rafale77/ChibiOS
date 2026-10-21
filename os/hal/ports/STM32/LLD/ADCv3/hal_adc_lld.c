@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,21 +29,6 @@
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
-
-#define ADC1_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC1_DMA_STREAM, STM32_ADC1_DMA_CHN)
-
-#define ADC2_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC2_DMA_STREAM, STM32_ADC2_DMA_CHN)
-
-#define ADC3_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC3_DMA_STREAM, STM32_ADC3_DMA_CHN)
-
-#define ADC4_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC4_DMA_STREAM, STM32_ADC4_DMA_CHN)
-
-#define ADC5_DMA_CHANNEL                                                    \
-  STM32_DMA_GETCHANNEL(STM32_ADC_ADC5_DMA_STREAM, STM32_ADC5_DMA_CHN)
 
 #if STM32_ADC_DUAL_MODE
 #if STM32_ADC_COMPACT_SAMPLES
@@ -416,6 +401,9 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
 
   isr  = ADC4->ISR;
   ADC4->ISR = isr;
+#if defined(STM32_ADC_ADC4_IRQ_HOOK)
+  STM32_ADC_ADC4_IRQ_HOOK
+#endif
 
   adc_lld_serve_interrupt(&ADCD3, isr);
 
@@ -437,6 +425,9 @@ OSAL_IRQ_HANDLER(STM32_ADC4_HANDLER) {
 
   isr  = ADC4->ISR;
   ADC4->ISR = isr;
+#if defined(STM32_ADC_ADC4_IRQ_HOOK)
+  STM32_ADC_ADC4_IRQ_HOOK
+#endif
 
   adc_lld_serve_interrupt(&ADCD4, isr);
 
@@ -457,6 +448,9 @@ OSAL_IRQ_HANDLER(STM32_ADC5_HANDLER) {
 
   isr  = ADC5->ISR;
   ADC5->ISR = isr;
+#if defined(STM32_ADC_ADC5_IRQ_HOOK)
+  STM32_ADC_ADC5_IRQ_HOOK
+#endif
 
   adc_lld_serve_interrupt(&ADCD5, isr);
 
@@ -789,13 +783,16 @@ void adc_lld_start(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC5
     if (&ADCD5 == adcp) {
+      osalDbgAssert(STM32_ADC5_CLOCK <= STM32_ADCCLK_MAX,
+                    "invalid clock frequency");
+
       adcp->dmastp = dmaStreamAllocI(STM32_ADC_ADC5_DMA_STREAM,
                                      STM32_ADC_ADC5_DMA_IRQ_PRIORITY,
                                      (stm32_dmaisr_t)adc_lld_serve_dma_interrupt,
                                      (void *)adcp);
       osalDbgAssert(adcp->dmastp != NULL, "unable to allocate stream");
 
-      clkmask |= (1 << 3);
+      clkmask |= (1 << 4);
 #if defined(STM32G4XX)
       rccEnableADC345(true);
 #endif
@@ -879,7 +876,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 
 #if STM32_ADC_USE_ADC5
     if (&ADCD5 == adcp) {
-      clkmask &= ~(1 << 3);
+      clkmask &= ~(1 << 4);
     }
 #endif
 
@@ -917,7 +914,7 @@ void adc_lld_stop(ADCDriver *adcp) {
 #endif
 
 #if STM32_HAS_ADC3 || STM32_HAS_ADC4 || STM32_HAS_ADC5
-    if ((clkmask & 0xC) == 0) {
+    if ((clkmask & 0x1C) == 0) {
       rccDisableADC345();
     }
 #endif

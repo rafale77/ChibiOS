@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -202,25 +202,25 @@ _crt0_entry:
                    ensure this.*/
                 ldr     r1, =__main_stack_base__
                 ldr     r2, =__main_stack_end__
-msloop:
+.Lmsloop:
                 cmp     r1, r2
-                bge     endmsloop
+                bge     .Lendmsloop
                 str     r0, [r1]
                 adds    r1, #4
-                b       msloop
-endmsloop:
+                b       .Lmsloop
+.Lendmsloop:
                 /* Process Stack initialization. Note, it assumes that the
                    stack size is a multiple of 4 so the linker file must
                    ensure this.*/
                 ldr     r1, =__process_stack_base__
                 ldr     r2, =__process_stack_end__
-psloop:
+.Lpsloop:
                 cmp     r1, r2
-                bge     endpsloop
+                bge     .Lendpsloop
                 str     r0, [r1]
                 adds    r1, #4
-                b       psloop
-endpsloop:
+                b       .Lpsloop
+.Lendpsloop:
 #endif
 
 #if CRT0_INIT_VECTORS == TRUE
@@ -231,15 +231,15 @@ endpsloop:
                 ldr     r2, =__vectors_base__
                 ldr     r3, =__vectors_end__
                 mov     r4, r2
-vloop:
+.Lvloop:
                 cmp     r2, r3
-                bge     endvloop
+                bge     .Lendvloop
                 ldr     r0, [r1]
                 str     r0, [r2]
                 adds    r1, #4
                 adds    r2, #4
-                b       vloop
-endvloop:
+                b       .Lvloop
+.Lendvloop:
 
                 /* VTOR now pointing to the RAM table.*/
                 ldr     r1, =SCB_VTOR
@@ -253,15 +253,15 @@ endvloop:
                 ldr     r1, =__textdata_base__
                 ldr     r2, =__data_base__
                 ldr     r3, =__data_end__
-dloop:
+.Ldloop:
                 cmp     r2, r3
-                bge     enddloop
+                bge     .Lenddloop
                 ldr     r0, [r1]
                 str     r0, [r2]
                 adds    r1, #4
                 adds    r2, #4
-                b       dloop
-enddloop:
+                b       .Ldloop
+.Lenddloop:
 #endif
 
 #if CRT0_INIT_BSS == TRUE
@@ -271,13 +271,13 @@ enddloop:
                 movs    r0, #0
                 ldr     r1, =__bss_base__
                 ldr     r2, =__bss_end__
-bloop:
+.Lbloop:
                 cmp     r1, r2
-                bge     endbloop
+                bge     .Lendbloop
                 str     r0, [r1]
                 adds    r1, #4
-                b       bloop
-endbloop:
+                b       .Lbloop
+.Lendbloop:
 #endif
 
 #if CRT0_INIT_RAM_AREAS == TRUE
@@ -292,14 +292,14 @@ endbloop:
                 /* Constructors invocation.*/
                 ldr     r4, =__init_array_base__
                 ldr     r5, =__init_array_end__
-initloop:
+.Linitloop:
                 cmp     r4, r5
-                bge     endinitloop
+                bge     .Lendinitloop
                 ldr     r1, [r4]
                 blx     r1
                 adds    r4, #4
-                b       initloop
-endinitloop:
+                b       .Linitloop
+.Lendinitloop:
 #endif
 
                 /* Main program invocation, r0 contains the returned value.*/
@@ -309,14 +309,14 @@ endinitloop:
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_base__
                 ldr     r5, =__fini_array_end__
-finiloop:
+.Lfiniloop:
                 cmp     r4, r5
-                bge     endfiniloop
+                bge     .Lendfiniloop
                 ldr     r1, [r4]
                 blx     r1
                 adds    r4, #4
-                b       finiloop
-endfiniloop:
+                b       .Lfiniloop
+.Lendfiniloop:
 #endif
 
                 /* Branching to the defined exit handler.*/
@@ -325,22 +325,22 @@ endfiniloop:
 
 #endif
 
-#if CRT0_EXTRA_CORES_NUMBER > 0
+                .macro  CRT0_EXTRA_CORE_ENTRY core
                 .align  2
                 .thumb_func
-                .global _crt0_c1_entry
-_crt0_c1_entry:
+                .global _crt0_c\core\()_entry
+_crt0_c\core\()_entry:
                 /* Interrupts are globally masked initially.*/
                 cpsid   i
 
 #if CRT0_FORCE_MSP_INIT == TRUE
                 /* MSP stack pointers initialization.*/
-                ldr     r0, =__c1_main_stack_end__
+                ldr     r0, =__c\core\()_main_stack_end__
                 msr     MSP, r0
 #endif
 
                 /* PSP stack pointers initialization.*/
-                ldr     r0, =__c1_process_stack_end__
+                ldr     r0, =__c\core\()_process_stack_end__
                 msr     PSP, r0
 
                 /* CPU mode initialization as configured.*/
@@ -356,51 +356,64 @@ _crt0_c1_entry:
 
 #if CRT0_INIT_CORE == TRUE
                 /* Core initialization.*/
-                bl      __c1_cpu_init
+                bl      __c\core\()_cpu_init
 #endif
 
                 /* Early initialization..*/
-                bl      __c1_early_init
+                bl      __c\core\()_early_init
 
 #if CRT0_INIT_STACKS == TRUE
                 ldr     r0, =CRT0_STACKS_FILL_PATTERN
                 /* Main Stack initialization. Note, it assumes that the
                    stack size is a multiple of 4 so the linker file must
                    ensure this.*/
-                ldr     r1, =__c1_main_stack_base__
-                ldr     r2, =__c1_main_stack_end__
-c1msloop:
+                ldr     r1, =__c\core\()_main_stack_base__
+                ldr     r2, =__c\core\()_main_stack_end__
+.Lc\core\()msloop\@:
                 cmp     r1, r2
-                bge     c1endmsloop
+                bge     .Lc\core\()endmsloop\@
                 str     r0, [r1]
                 adds    r1, #4
-                b       c1msloop
-c1endmsloop:
+                b       .Lc\core\()msloop\@
+.Lc\core\()endmsloop\@:
                 /* Process Stack initialization. Note, it assumes that the
                    stack size is a multiple of 4 so the linker file must
                    ensure this.*/
-                ldr     r1, =__c1_process_stack_base__
-                ldr     r2, =__c1_process_stack_end__
-c1psloop:
+                ldr     r1, =__c\core\()_process_stack_base__
+                ldr     r2, =__c\core\()_process_stack_end__
+.Lc\core\()psloop\@:
                 cmp     r1, r2
-                bge     c1endpsloop
+                bge     .Lc\core\()endpsloop\@
                 str     r0, [r1]
                 adds    r1, #4
-                b       c1psloop
-c1endpsloop:
+                b       .Lc\core\()psloop\@
+.Lc\core\()endpsloop\@:
 #endif
 
                 /* Late initialization..*/
-                bl      __c1_late_init
+                bl      __c\core\()_late_init
 
                 /* Main program invocation, r0 contains the returned value.*/
-                bl      c1_main
+                bl      c\core\()_main
 
                 /* Branching to the defined exit handler.*/
-                ldr     r1, =__c1_default_exit
+                ldr     r1, =__c\core\()_default_exit
                 bx      r1
+                .endm
 
-#elif CRT0_EXTRA_CORES_NUMBER > 1
+#if CRT0_EXTRA_CORES_NUMBER > 0
+                CRT0_EXTRA_CORE_ENTRY 1
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 1
+                CRT0_EXTRA_CORE_ENTRY 2
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 2
+                CRT0_EXTRA_CORE_ENTRY 3
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 3
 #error "unsupported number of extra cores"
 #endif
 

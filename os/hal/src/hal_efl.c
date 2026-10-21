@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -108,6 +108,7 @@ void eflObjectInit(EFlashDriver *eflp) {
 
   eflp->vmt = &vmt;
   eflp->state = FLASH_STOP;
+  eflp->config = NULL;
 #if EFL_USE_MUTUAL_EXCLUSION == TRUE
   osalMutexObjectInit(&eflp->mutex);
 #endif
@@ -138,16 +139,17 @@ msg_t eflStart(EFlashDriver *eflp, const EFlashConfig *config) {
 
 #if defined(EFL_LLD_ENHANCED_API)
   msg = efl_lld_start(eflp);
-#else
-  efl_lld_start(eflp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     eflp->state = FLASH_READY;
   }
   else {
     eflp->state = FLASH_STOP;
   }
+#else
+  efl_lld_start(eflp);
+  eflp->state = FLASH_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 
@@ -171,6 +173,7 @@ void eflStop(EFlashDriver *eflp) {
                 "invalid state");
 
   efl_lld_stop(eflp);
+  eflp->config = NULL;
   eflp->state = FLASH_STOP;
 
   osalSysUnlock();

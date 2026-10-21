@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -97,14 +97,14 @@
  */
 #define sio_lld_driver_fields                                               \
   /* Number of the associated VUART.*/                                      \
-  uint32_t                  nvuart
+  uint32_t                  nvuart;
 
 /**
  * @brief   Low level fields of the SIO configuration structure.
  */
 #define sio_lld_config_fields                                               \
   /* Predefined configuration index.*/                                      \
-  uint32_t                  ncfg
+  uint32_t                  ncfg;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

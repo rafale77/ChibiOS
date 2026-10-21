@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2021 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -75,19 +75,19 @@ typedef uint8_t adcerror_t;
  * @brief   Low level fields of the ADC driver structure.
  */
 #define adc_lld_driver_fields                                               \
-  size_t                   currentBufferPosition
+  size_t                   currentBufferPosition;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_config_fields                                               \
-  uint8_t analog_reference
+  uint8_t analog_reference;
 
 /**
  * @brief   Low level fields of the ADC configuration structure.
  */
 #define adc_lld_configuration_group_fields                                  \
-  uint8_t                   channelsMask
+  uint8_t                   channelsMask;
 
 /*==========================================================================*/
 /* External declarations.                                                   */

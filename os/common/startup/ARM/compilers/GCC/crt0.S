@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -92,11 +92,11 @@ Reset_Handler:
                 ldr     r1, =__textdata_base__
                 ldr     r2, =__data_base__
                 ldr     r3, =__data_end__
-dataloop:
+.Ldataloop:
                 cmp     r2, r3
                 ldrlo   r0, [r1], #4
                 strlo   r0, [r2], #4
-                blo     dataloop
+                blo     .Ldataloop
                 /*
                  * BSS initialization.
                  * NOTE: It assumes that the BSS size is a multiple of 4.
@@ -104,10 +104,10 @@ dataloop:
                 mov     r0, #0
                 ldr     r1, =__bss_base__
                 ldr     r2, =__bss_end__
-bssloop:
+.Lbssloop:
                 cmp     r1, r2
                 strlo   r0, [r1], #4
-                blo     bssloop
+                blo     .Lbssloop
                 /*
                  * Late initialization.
                  */

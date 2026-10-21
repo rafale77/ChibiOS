@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -94,16 +94,17 @@ msg_t gptStart(GPTDriver *gptp, const GPTConfig *config) {
 
 #if defined(GPT_LLD_ENHANCED_API)
   msg = gpt_lld_start(gptp);
-#else
-  gpt_lld_start(gptp);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     gptp->state = GPT_READY;
   }
   else {
     gptp->state = GPT_STOP;
   }
+#else
+  gpt_lld_start(gptp);
+  gptp->state = GPT_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -155,6 +155,13 @@
 #endif
 
 /**
+ * @brief   Number of extra cores.
+ */
+#if !defined(CRT0_EXTRA_CORES_NUMBER) || defined(__DOXYGEN__)
+#define CRT0_EXTRA_CORES_NUMBER             0
+#endif
+
+/**
  * @brief   FPU FPCCR register initialization value.
  * @note    Only used if @p CRT0_INIT_FPU is equal to @p TRUE.
  */
@@ -241,15 +248,10 @@ _crt0_entry:
                 movw    r1, #SCB_FPDSCR & 0xFFFF
                 movt    r1, #SCB_FPDSCR >> 16
                 str     r0, [r1]
-
-                /* Enforcing FPCA bit in the CONTROL register.*/
-                movs    r0, #CRT0_CONTROL_INIT | CONTROL_FPCA
-
-#else
-                movs    r0, #CRT0_CONTROL_INIT
 #endif
 
                 /* CONTROL register initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
                 msr     CONTROL, r0
                 isb
 
@@ -268,22 +270,22 @@ _crt0_entry:
                    ensure this.*/
                 ldr     r1, =__main_stack_base__
                 ldr     r2, =__main_stack_end__
-msloop:
+.Lmsloop:
                 cmp     r1, r2
                 itt     lo
                 strlo   r0, [r1], #4
-                blo     msloop
+                blo     .Lmsloop
 
                 /* Process Stack initialization. Note, it assumes that the
                    stack size is a multiple of 4 so the linker file must
                    ensure this.*/
                 ldr     r1, =__process_stack_base__
                 ldr     r2, =__process_stack_end__
-psloop:
+.Lpsloop:
                 cmp     r1, r2
                 itt     lo
                 strlo   r0, [r1], #4
-                blo     psloop
+                blo     .Lpsloop
 #endif
 
 #if CRT0_INIT_VECTORS == TRUE
@@ -294,12 +296,12 @@ psloop:
                 ldr     r2, =__vectors_base__
                 ldr     r3, =__vectors_end__
                 mov     r4, r2
-vloop:
+.Lvloop:
                 cmp     r2, r3
                 ittt    lo
                 ldrlo   r0, [r1], #4
                 strlo   r0, [r2], #4
-                blo     vloop
+                blo     .Lvloop
 
                 /* VTOR now pointing to the RAM table.*/
                 ldr     r1, =SCB_VTOR
@@ -313,12 +315,12 @@ vloop:
                 ldr     r1, =__textdata_base__
                 ldr     r2, =__data_base__
                 ldr     r3, =__data_end__
-dloop:
+.Ldloop:
                 cmp     r2, r3
                 ittt    lo
                 ldrlo   r0, [r1], #4
                 strlo   r0, [r2], #4
-                blo     dloop
+                blo     .Ldloop
 #endif
 
 #if CRT0_INIT_BSS == TRUE
@@ -328,11 +330,11 @@ dloop:
                 movs    r0, #0
                 ldr     r1, =__bss_base__
                 ldr     r2, =__bss_end__
-bloop:
+.Lbloop:
                 cmp     r1, r2
                 itt     lo
                 strlo   r0, [r1], #4
-                blo     bloop
+                blo     .Lbloop
 #endif
 
 #if CRT0_INIT_RAM_AREAS == TRUE
@@ -347,13 +349,13 @@ bloop:
                 /* Constructors invocation.*/
                 ldr     r4, =__init_array_base__
                 ldr     r5, =__init_array_end__
-initloop:
+.Linitloop:
                 cmp     r4, r5
-                bge     endinitloop
+                bge     .Lendinitloop
                 ldr     r1, [r4], #4
                 blx     r1
-                b       initloop
-endinitloop:
+                b       .Linitloop
+.Lendinitloop:
 #endif
 
                 /* Main program invocation, r0 contains the returned value.*/
@@ -363,18 +365,136 @@ endinitloop:
                 /* Destructors invocation.*/
                 ldr     r4, =__fini_array_base__
                 ldr     r5, =__fini_array_end__
-finiloop:
+.Lfiniloop:
                 cmp     r4, r5
-                bge     endfiniloop
+                bge     .Lendfiniloop
                 ldr     r1, [r4], #4
                 blx     r1
-                b       finiloop
-endfiniloop:
+                b       .Lfiniloop
+.Lendfiniloop:
 #endif
 
                 /* Branching to the defined exit handler.*/
                 b       __default_exit
 
 #endif /* !defined(__DOXYGEN__) */
+
+                .macro  CRT0_EXTRA_CORE_ENTRY core
+                .align  2
+                .thumb_func
+                .global _crt0_c\core\()_entry
+_crt0_c\core\()_entry:
+                /* Interrupts are globally masked initially.*/
+                cpsid   i
+
+#if CRT0_FORCE_MSP_INIT == TRUE
+                /* MSP stack pointers initialization.*/
+                ldr     r0, =__c\core\()_main_stack_end__
+                msr     MSP, r0
+#endif
+
+                /* PSP stack pointers initialization.*/
+                ldr     r0, =__c\core\()_process_stack_end__
+                msr     PSP, r0
+
+#if CRT0_VTOR_INIT == TRUE
+                /* Initial VTOR position enforced.*/
+                ldr     r0, =_vectors
+                ldr     r1, =SCB_VTOR
+                str     r0, [r1]
+#endif
+
+#if CRT0_INIT_FPU == TRUE
+                /* FPU FPCCR initialization.*/
+                movw    r0, #CRT0_FPCCR_INIT & 0xFFFF
+                movt    r0, #CRT0_FPCCR_INIT >> 16
+                movw    r1, #SCB_FPCCR & 0xFFFF
+                movt    r1, #SCB_FPCCR >> 16
+                str     r0, [r1]
+                dsb
+                isb
+
+                /* CPACR initialization.*/
+                movw    r0, #CRT0_CPACR_INIT & 0xFFFF
+                movt    r0, #CRT0_CPACR_INIT >> 16
+                movw    r1, #SCB_CPACR & 0xFFFF
+                movt    r1, #SCB_CPACR >> 16
+                str     r0, [r1]
+                dsb
+                isb
+
+                /* FPU FPSCR initially cleared.*/
+                mov     r0, #0
+                vmsr    FPSCR, r0
+
+                /* FPU FPDSCR initially cleared.*/
+                movw    r1, #SCB_FPDSCR & 0xFFFF
+                movt    r1, #SCB_FPDSCR >> 16
+                str     r0, [r1]
+#endif
+
+                /* CONTROL register initialization as configured.*/
+                movs    r0, #CRT0_CONTROL_INIT
+                msr     CONTROL, r0
+                isb
+
+#if CRT0_INIT_CORE == TRUE
+                /* Core initialization.*/
+                bl      __c\core\()_cpu_init
+#endif
+
+                /* Early initialization.*/
+                bl      __c\core\()_early_init
+
+#if CRT0_INIT_STACKS == TRUE
+                ldr     r0, =CRT0_STACKS_FILL_PATTERN
+                /* Main Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c\core\()_main_stack_base__
+                ldr     r2, =__c\core\()_main_stack_end__
+.Lc\core\()msloop\@:
+                cmp     r1, r2
+                itt     lo
+                strlo   r0, [r1], #4
+                blo     .Lc\core\()msloop\@
+
+                /* Process Stack initialization. Note, it assumes that the
+                   stack size is a multiple of 4 so the linker file must
+                   ensure this.*/
+                ldr     r1, =__c\core\()_process_stack_base__
+                ldr     r2, =__c\core\()_process_stack_end__
+.Lc\core\()psloop\@:
+                cmp     r1, r2
+                itt     lo
+                strlo   r0, [r1], #4
+                blo     .Lc\core\()psloop\@
+#endif
+
+                /* Late initialization.*/
+                bl      __c\core\()_late_init
+
+                /* Main program invocation, r0 contains the returned value.*/
+                bl      c\core\()_main
+
+                /* Branching to the defined exit handler.*/
+                b       __c\core\()_default_exit
+                .endm
+
+#if CRT0_EXTRA_CORES_NUMBER > 0
+                CRT0_EXTRA_CORE_ENTRY 1
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 1
+                CRT0_EXTRA_CORE_ENTRY 2
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 2
+                CRT0_EXTRA_CORE_ENTRY 3
+#endif
+
+#if CRT0_EXTRA_CORES_NUMBER > 3
+#error "unsupported number of extra cores"
+#endif
 
 /** @} */

@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /**
- * @brief   Type of ADUCM36x GP port setup.
+ * @brief   Type of ADUCM36x GPIO port setup.
  */
 typedef struct {
   uint32_t              con;
@@ -54,7 +54,7 @@ typedef struct {
 } gp_config_t;
 
 /**
- * @brief   STM32 GPIO static initialization data.
+ * @brief   ADUCM36x GPIO static initialization data.
  */
 static const gp_config_t gp_default_config = {
   {VAL_GP0CON, VAL_GP0OEN, VAL_GP0PUL, VAL_GP0OCE},

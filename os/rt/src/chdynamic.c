@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -61,9 +60,9 @@
  *          @p CH_CFG_USE_HEAP must be enabled in order to use this function.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
- * @note    The memory allocated for the thread is not released automatically,
- *          it is responsibility of the creator thread to call @p chThdWait()
- *          and then release the allocated memory.
+ * @note    The allocated thread memory is not released automatically, it is
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          in order to release the allocated memory.
  *
  * @param[in] heapp     heap from which allocate the memory or @p NULL for the
  *                      default heap
@@ -118,9 +117,9 @@ thread_t *chThdCreateFromHeap(memory_heap_t *heapp, size_t size,
  *          alignment @p PORT_WORKING_AREA_ALIGN.
  * @note    A thread can terminate by calling @p chThdExit() or by simply
  *          returning from its main function.
- * @note    The memory allocated for the thread is not released automatically,
- *          it is responsibility of the creator thread to call @p chThdWait()
- *          and then release the allocated memory.
+ * @note    The allocated thread memory is not released automatically, it is
+ *          caller responsibility to call @p chThdRelease() or @p chThdWait()
+ *          in order to release the allocated memory.
  *
  * @param[in] mp        pointer to the memory pool object
  * @param[in] name      thread name

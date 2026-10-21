@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -193,16 +193,17 @@ msg_t sdStart(SerialDriver *sdp, const SerialConfig *config) {
 
 #if defined(SD_LLD_ENHANCED_API)
   msg = sd_lld_start(sdp, config);
-#else
-  sd_lld_start(sdp, config);
-  msg = HAL_RET_SUCCESS;
-#endif
   if (msg == HAL_RET_SUCCESS) {
     sdp->state = SD_READY;
   }
   else {
     sdp->state = SD_STOP;
   }
+#else
+  sd_lld_start(sdp, config);
+  sdp->state = SD_READY;
+  msg = HAL_RET_SUCCESS;
+#endif
 
   osalSysUnlock();
 

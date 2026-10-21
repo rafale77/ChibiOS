@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -39,13 +39,6 @@
  * @name    Configuration options
  * @{
  */
-
-/**
- * @brief   DAC mode control register.
- */
-#if !defined(STM32_DAC_HAS_MCR) || defined(__DOXYGEN__)
-#define STM32_DAC_HAS_MCR                   FALSE
-#endif
 
 /**
  * @brief   Enables the DAC dual mode.
@@ -268,6 +261,10 @@
 #endif
 #if !defined(STM32_HAS_DAC4_CH2)
 #define STM32_HAS_DAC4_CH2                  FALSE
+#endif
+
+#if !defined(STM32_DAC_HAS_MCR)
+#define STM32_DAC_HAS_MCR                   FALSE
 #endif
 
 #if STM32_DAC_USE_DAC1_CH1 && !STM32_HAS_DAC1_CH1
@@ -578,7 +575,7 @@ typedef enum {
   /* DAC channel parameters.*/                                              \
   const dacparams_t         *params;                                        \
   /* Associated DMA.*/                                                      \
-  const stm32_dma_stream_t  *dma
+  const stm32_dma_stream_t  *dma;
 
 /**
  * @brief   Low level fields of the DAC configuration structure.
@@ -589,21 +586,21 @@ typedef enum {
 #if STM32_DAC_HAS_MCR == TRUE
 #define dac_lld_config_fields                                               \
   /* Initial output on DAC channel.*/                                       \
-  uint32_t                init;                                             \
+  uint32_t                  init;                                           \
   /* DAC data holding register mode.*/                                      \
-  dacdhrmode_t            datamode;                                         \
+  dacdhrmode_t              datamode;                                       \
   /* DAC control register.*/                                                \
-  uint32_t                cr;                                               \
+  uint32_t                  cr;                                             \
   /* DAC mode control register.*/                                           \
-  uint32_t                mcr
+  uint32_t                  mcr;
 #else
 #define dac_lld_config_fields                                               \
   /* Initial output on DAC channel.*/                                       \
-  uint32_t                init;                                             \
+  uint32_t                  init;                                           \
   /* DAC data holding register mode.*/                                      \
-  dacdhrmode_t            datamode;                                         \
+  dacdhrmode_t              datamode;                                       \
   /* DAC control register.*/                                                \
-  uint32_t                cr
+  uint32_t                  cr;
 #endif /* STM32_DAC_HAS_MCR == TRUE */
 
 /**
@@ -613,7 +610,7 @@ typedef enum {
   /* DAC initialization data. This field contains the (not shifted) value   \
      to be put into the TSEL field of the DAC CR register during            \
      initialization. All other fields are handled internally.*/             \
-  uint32_t                  trigger
+  uint32_t                  trigger;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */

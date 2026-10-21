@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2018 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -348,7 +348,7 @@
   /* RX DMA mode bit mask.*/                                                \
   uint32_t                  rxdmamode;                                      \
   /* TX DMA mode bit mask.*/                                                \
-  uint32_t                  txdmamode
+  uint32_t                  txdmamode;
 
 /**
  * @brief   Low level fields of the I2S configuration structure.
@@ -366,7 +366,7 @@
   /* Configuration of the I2SPR register.                                   \
      NOTE: See the STM32 reference manual, this register is used for        \
            the I2S clock setup.*/                                           \
-  int16_t                   i2spr
+  int16_t                   i2spr;
 
 /*===========================================================================*/
 /* External declarations.                                                    */

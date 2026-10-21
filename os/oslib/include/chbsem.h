@@ -1,6 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006,2007,2008,2009,2010,2011,2012,2013,2014,
-              2015,2016,2017,2018,2019,2020,2021 Giovanni Di Sirio.
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     This file is part of ChibiOS.
 
@@ -81,9 +80,9 @@ typedef struct ch_binary_semaphore {
 /*===========================================================================*/
 
 /**
- * @brief   Data part of a static semaphore initializer.
- * @details This macro should be used when statically initializing a semaphore
- *          that is part of a bigger structure.
+ * @brief   Data part of a static binary semaphore initializer.
+ * @details This macro should be used when statically initializing a binary
+ *          semaphore that is part of a bigger structure.
  *
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
@@ -92,9 +91,9 @@ typedef struct ch_binary_semaphore {
   {__SEMAPHORE_DATA(name.sem, ((taken) ? 0 : 1))}
 
 /**
- * @brief   Static semaphore initializer.
- * @details Statically initialized semaphores require no explicit
- *          initialization using @p chBSemInit().
+ * @brief   Static binary semaphore initializer.
+ * @details Statically initialized binary semaphores require no explicit
+ *          initialization using @p chBSemObjectInit().
  *
  * @param[in] name      the name of the semaphore variable
  * @param[in] taken     the semaphore initial state
@@ -134,7 +133,7 @@ static inline void chBSemObjectInit(binary_semaphore_t *bsp, bool taken) {
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
  * @retval MSG_RESET    if the binary semaphore has been reset using
- *                      @p bsemReset().
+ *                      @p chBSemReset().
  *
  * @api
  */
@@ -151,7 +150,7 @@ static inline msg_t chBSemWait(binary_semaphore_t *bsp) {
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
  * @retval MSG_RESET    if the binary semaphore has been reset using
- *                      @p bsemReset().
+ *                      @p chBSemReset().
  *
  * @sclass
  */
@@ -175,7 +174,7 @@ static inline msg_t chBSemWaitS(binary_semaphore_t *bsp) {
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
  * @retval MSG_RESET    if the binary semaphore has been reset using
- *                      @p bsemReset().
+ *                      @p chBSemReset().
  * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled or reset
  *                      within the specified timeout.
  *
@@ -202,7 +201,7 @@ static inline msg_t chBSemWaitTimeoutS(binary_semaphore_t *bsp,
  *                      released from the semaphore.
  * @retval MSG_OK       if the binary semaphore has been successfully taken.
  * @retval MSG_RESET    if the binary semaphore has been reset using
- *                      @p bsemReset().
+ *                      @p chBSemReset().
  * @retval MSG_TIMEOUT  if the binary semaphore has not been signaled or reset
  *                      within the specified timeout.
  *
@@ -217,7 +216,7 @@ static inline msg_t chBSemWaitTimeout(binary_semaphore_t *bsp,
 /**
  * @brief   Reset operation on the binary semaphore.
  * @note    The released threads can recognize they were waked up by a reset
- *          rather than a signal because the @p bsemWait() will return
+ *          rather than a signal because the @p chBSemWait() will return
  *          @p MSG_RESET instead of @p MSG_OK.
  * @note    This function does not reschedule.
  *
@@ -239,7 +238,7 @@ static inline void chBSemResetI(binary_semaphore_t *bsp, bool taken) {
 /**
  * @brief   Reset operation on the binary semaphore.
  * @note    The released threads can recognize they were waked up by a reset
- *          rather than a signal because the @p bsemWait() will return
+ *          rather than a signal because the @p chBSemWait() will return
  *          @p MSG_RESET instead of @p MSG_OK.
  *
  * @param[in] bsp       pointer to a @p binary_semaphore_t structure
